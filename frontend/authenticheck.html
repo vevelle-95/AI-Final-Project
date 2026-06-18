@@ -1,680 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<<<<<<< Updated upstream
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AuthentiCheck — Dashboard</title>
+  <title>CLIP-CA-CG — Dashboard</title>
+  <meta name="description"
+    content="CLIP-CA-CG Multimodal Sentiment Analysis Dashboard — Analyze e-commerce reviews with RoBERTa, ResNet-50, Cross-Attention and Cross-modal Gating.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="styles.css">
-=======
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLIP-CA-CG — Dashboard</title>
-<meta name="description" content="CLIP-CA-CG Multimodal Sentiment Analysis Dashboard — Analyze e-commerce reviews with RoBERTa, ResNet-50, Cross-Attention and Cross-modal Gating.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#06080f;
-  --bg2:#0c1120;
-  --surface:rgba(17,24,45,0.7);
-  --surface-solid:#111a2d;
-  --surface2:rgba(25,35,60,0.5);
-  --surface3:rgba(30,42,70,0.4);
-  --text:#e8ecf4;
-  --text2:#8b95b0;
-  --text3:#515c78;
-  --border:rgba(99,120,180,0.12);
-  --border2:rgba(99,120,180,0.22);
-  --blue:#3b82f6;
-  --blue-glow:rgba(59,130,246,0.15);
-  --blue-light:rgba(59,130,246,0.1);
-  --cyan:#06b6d4;
-  --cyan-light:rgba(6,182,212,0.1);
-  --emerald:#10b981;
-  --emerald-light:rgba(16,185,129,0.1);
-  --emerald-dark:#059669;
-  --amber:#f59e0b;
-  --amber-light:rgba(245,158,11,0.1);
-  --rose:#f43f5e;
-  --rose-light:rgba(244,63,94,0.1);
-  --purple:#8b5cf6;
-  --purple-light:rgba(139,92,246,0.1);
-  --radius:10px;
-  --radius-lg:14px;
-}
-html{scroll-behavior:smooth;}
-body{font-family:'Inter',system-ui,sans-serif;font-size:14px;background:var(--bg);color:var(--text);min-height:100vh;}
-.mono{font-family:'JetBrains Mono',monospace;}
-.app{display:flex;min-height:100vh;}
-
-/* Sidebar */
-.sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 12px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0;height:100vh;z-index:50;}
-.logo{display:flex;align-items:center;gap:10px;padding:6px 8px 20px;font-size:17px;font-weight:700;letter-spacing:-0.3px;}
-.logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;}
-.logo .accent{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.snav{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--radius);font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s;border:none;background:transparent;width:100%;text-align:left;font-family:inherit;}
-.snav:hover{background:var(--surface2);color:var(--text);}
-.snav.active{background:var(--blue-light);color:var(--blue);font-weight:600;border:1px solid rgba(59,130,246,0.2);}
-.snav i{font-size:18px;}
-.sidebar-divider{height:1px;background:var(--border);margin:8px 0;}
-.sidebar-section{font-size:10px;color:var(--text3);padding:6px 11px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
-.sidebar-footer{margin-top:auto;padding:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);line-height:1.5;}
-.sidebar-footer strong{color:var(--text2);font-weight:600;}
-
-/* Main */
-.main{flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;background:
-  radial-gradient(ellipse at 20% 0%,rgba(59,130,246,0.03) 0%,transparent 50%),
-  radial-gradient(ellipse at 80% 100%,rgba(6,182,212,0.02) 0%,transparent 50%),
-  var(--bg);}
-.page{display:none;flex-direction:column;gap:16px;animation:fadeIn .3s ease-out;}
-.page.active{display:flex;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.page-title{font-size:20px;font-weight:700;letter-spacing:-0.3px;}
-.page-sub{font-size:13px;color:var(--text2);margin-top:2px;}
-
-/* Buttons */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius);font-size:13px;cursor:pointer;border:none;font-family:inherit;font-weight:500;transition:all .2s;}
-.btn-primary{background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;box-shadow:0 2px 12px rgba(59,130,246,0.2);}
-.btn-primary:hover{box-shadow:0 4px 20px rgba(59,130,246,0.35);transform:translateY(-1px);}
-.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2);}
-.btn-outline:hover{background:var(--surface2);color:var(--text);border-color:var(--text3);}
-.btn-sm{padding:6px 12px;font-size:12px;}
-.btn-danger{background:var(--rose-light);color:var(--rose);border:1px solid rgba(244,63,94,0.2);}
-.btn-danger:hover{background:rgba(244,63,94,0.15);}
-
-/* Cards */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;backdrop-filter:blur(12px);transition:border-color .2s;}
-.card:hover{border-color:var(--border2);}
-.card-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}
-
-/* Metrics */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-.metric{background:var(--surface2);border-radius:var(--radius);padding:14px 16px;cursor:pointer;border:1.5px solid transparent;transition:all .2s;backdrop-filter:blur(8px);}
-.metric:hover{border-color:var(--border2);transform:translateY(-2px);}
-.metric.selected{border-color:var(--blue);background:var(--blue-light);}
-.metric-label{font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500;}
-.metric-val{font-size:24px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-0.5px;}
-.metric-sub{font-size:11px;color:var(--text3);margin-top:3px;}
-
-/* Sentiment badges */
-.badge{font-size:11px;padding:3px 10px;border-radius:100px;font-weight:600;white-space:nowrap;}
-.badge.positive{background:var(--emerald-light);color:var(--emerald);border:1px solid rgba(16,185,129,0.2);}
-.badge.negative{background:var(--rose-light);color:var(--rose);border:1px solid rgba(244,63,94,0.2);}
-.badge.neutral{background:var(--amber-light);color:var(--amber);border:1px solid rgba(245,158,11,0.2);}
-
-/* System action badges */
-.action-badge{font-size:11px;padding:3px 10px;border-radius:100px;font-weight:600;}
-.action-badge.flagged{background:var(--rose-light);color:var(--rose);}
-.action-badge.logged{background:var(--amber-light);color:var(--amber);}
-.action-badge.approved{background:var(--emerald-light);color:var(--emerald);}
-
-/* Filter tabs */
-.filter-tabs{display:flex;gap:4px;flex-wrap:wrap;}
-.ftab{padding:6px 14px;border-radius:100px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:inherit;font-weight:500;transition:all .15s;}
-.ftab:hover{background:var(--surface2);color:var(--text);}
-.ftab.active{background:var(--blue-light);color:var(--blue);border-color:rgba(59,130,246,0.3);font-weight:600;}
-
-/* Review rows */
-.review-list{display:flex;flex-direction:column;gap:8px;max-height:480px;overflow-y:auto;padding-right:4px;}
-.rev{border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:all .15s;}
-.rev:hover{background:var(--surface2);border-color:var(--border2);}
-.rev.selected{border-color:var(--blue);background:var(--blue-light);}
-.rev-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px;}
-.rev-text{font-size:12.5px;color:var(--text2);line-height:1.6;}
-.rev-scores{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
-.rev-score{font-size:10px;padding:2px 8px;border-radius:100px;background:var(--surface3);color:var(--text3);font-family:'JetBrains Mono',monospace;font-weight:500;}
-
-/* Bars */
-.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px;}
-.bar-label{width:80px;color:var(--text2);font-weight:500;}
-.bar-track{flex:1;height:8px;background:var(--surface3);border-radius:4px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:4px;transition:width .6s ease-out;}
-.bar-count{width:36px;text-align:right;color:var(--text3);font-size:11px;font-family:'JetBrains Mono',monospace;}
-
-/* Detail rows */
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px;}
-.detail-row:last-child{border-bottom:none;}
-.detail-label{color:var(--text2);}
-.chip{font-size:11px;padding:3px 10px;border-radius:100px;background:var(--surface3);color:var(--text2);font-weight:500;}
-.chip.mono{font-family:'JetBrains Mono',monospace;}
-
-/* Pipeline progress */
-.progress-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.prog-step{font-size:11px;padding:5px 12px;border-radius:100px;background:var(--surface2);color:var(--text3);font-weight:500;display:flex;align-items:center;gap:4px;border:1px solid transparent;}
-.prog-step.done{background:var(--emerald-light);color:var(--emerald);border-color:rgba(16,185,129,0.2);}
-.prog-step.active{background:var(--blue-light);color:var(--blue);font-weight:600;border-color:rgba(59,130,246,0.2);animation:pulseGlow 2s infinite;}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,0);}50%{box-shadow:0 0 12px 0 rgba(59,130,246,0.15);}}
-.prog-arrow{font-size:14px;color:var(--text3);}
-
-/* Product row */
-.product-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-radius:var(--radius);font-size:13px;color:var(--text2);border:1px solid var(--border);}
-.product-row i{font-size:18px;color:var(--blue);}
-.product-row strong{color:var(--text);}
-
-/* Upload */
-.upload-zone{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:30px;text-align:center;color:var(--text3);cursor:pointer;transition:all .2s;background:var(--surface2);}
-.upload-zone:hover{background:var(--surface3);border-color:var(--blue);}
-.upload-zone.dragover{background:var(--blue-light);border-color:var(--blue);}
-
-/* Image grid */
-.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px;}
-.img-thumb-wrap{position:relative;}
-.img-thumb{width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);}
-.img-remove{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.img-placeholder{width:100%;aspect-ratio:1;background:var(--surface2);border-radius:var(--radius);border:1px dashed var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:11px;flex-direction:column;gap:4px;cursor:pointer;transition:all .2s;}
-.img-placeholder:hover{border-color:var(--blue);color:var(--blue);}
-.img-placeholder i{font-size:22px;}
-
-/* Grid layouts */
-.cols-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.cols-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-
-/* Pipeline detail sections */
-.pipe-section{padding:12px;border-radius:var(--radius);background:var(--surface2);margin-bottom:10px;border:1px solid var(--border);}
-.pipe-section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.pipe-section-title i{font-size:14px;}
-.gate-bar{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
-.gate-label{font-size:11px;color:var(--text2);width:70px;font-weight:500;}
-.gate-track{flex:1;height:10px;background:var(--surface3);border-radius:5px;overflow:hidden;}
-.gate-fill{height:100%;border-radius:5px;transition:width .5s;}
-.gate-val{font-size:11px;width:36px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--text2);}
-
-/* Toast */
-.toast{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;z-index:999;box-shadow:0 8px 30px rgba(59,130,246,0.3);}
-.toast.show{opacity:1;transform:translateY(0);}
-
-/* Textarea / Input */
-textarea,input[type=text]{width:100%;padding:10px 14px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;}
-textarea:focus,input[type=text]:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-glow);}
-select{padding:8px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface2);color:var(--text);font-family:inherit;cursor:pointer;}
-select:focus{outline:none;border-color:var(--blue);}
-
-/* Section label */
-.section-label{font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:600;}
-
-/* Scrollbar */
-::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
-::-webkit-scrollbar-thumb:hover{background:var(--text3);}
-
-/* Model perf grid */
-.perf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-.perf-item{background:var(--surface2);border-radius:var(--radius);padding:14px;border:1px solid var(--border);}
-.perf-metric-name{font-size:11px;color:var(--text2);margin-bottom:8px;font-weight:600;}
-
-/* Responsive */
-@media(max-width:768px){
-  .sidebar{display:none;}
-  .metrics{grid-template-columns:repeat(2,1fr);}
-  .cols-2{grid-template-columns:1fr;}
-  .perf-grid{grid-template-columns:repeat(2,1fr);}
-}
-</style>
->>>>>>> Stashed changes
 </head>
+
 <body>
 
-<div class="app">
+  <div class="app">
 
-<<<<<<< Updated upstream
-  <!-- ══════════════════════════════════════
-       Sidebar
-  ══════════════════════════════════════ -->
-  <aside class="sidebar">
-    <div class="logo">Authenti<span>Check</span></div>
-=======
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="logo">
-    <div class="logo-icon"><i class="ti ti-brain"></i></div>
-    <span>CLIP<span class="accent">-CA-CG</span></span>
-  </div>
-  <button class="snav active" onclick="goPage('dashboard')" id="nav-dashboard"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
-  <button class="snav" onclick="goPage('upload')" id="nav-upload"><i class="ti ti-upload"></i> Upload</button>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-section">Analysis</div>
-  <button class="snav" onclick="goPage('pipeline')" id="nav-pipeline"><i class="ti ti-topology-star-3"></i> Pipeline</button>
-  <button class="snav" onclick="goPage('sentiment')" id="nav-sentiment"><i class="ti ti-chart-bar"></i> Sentiment</button>
-  <div class="sidebar-divider"></div>
-  <button class="snav" onclick="goPage('settings')" id="nav-settings"><i class="ti ti-settings"></i> Settings</button>
-  <div class="sidebar-footer">
-    <strong>CLIP-CA-CG</strong><br>
-    Lu et al. — Multimodal<br>Sentiment Analysis
-  </div>
-</div>
->>>>>>> Stashed changes
-
-    <button class="sidebar-nav active" id="nav-dashboard" onclick="goPage('dashboard')">
-      <i class="ti ti-layout-dashboard"></i> Dashboard
-    </button>
-    <button class="sidebar-nav" id="nav-upload" onclick="goPage('upload')">
-      <i class="ti ti-upload"></i> Upload reviews
-    </button>
-
-<<<<<<< Updated upstream
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-section">Analysis</div>
-
-    <button class="sidebar-nav" id="nav-classify" onclick="goPage('classify')">
-      <i class="ti ti-shield-check"></i> Classification
-    </button>
-    <button class="sidebar-nav" id="nav-sentiment" onclick="goPage('sentiment')">
-      <i class="ti ti-chart-bar"></i> Sentiment (ABSA)
-    </button>
-
-    <div class="sidebar-divider"></div>
-
-    <button class="sidebar-nav" id="nav-settings" onclick="goPage('settings')">
-      <i class="ti ti-settings"></i> Settings
-    </button>
-  </aside>
-
-  <!-- ══════════════════════════════════════
-       Main content
-  ══════════════════════════════════════ -->
-  <main class="main">
-
-    <!-- ── Dashboard page ── -->
-    <div id="page-dashboard" class="page active">
-
-      <div class="topbar">
-        <div>
-          <div class="page-title">Dashboard</div>
-          <div class="page-sub">Logitech MX Master 3S Wireless Mouse — 3,842 reviews</div>
-=======
-  <!-- ===================== DASHBOARD ===================== -->
-  <div id="page-dashboard" class="page active">
-    <div class="topbar">
-      <div>
-        <div class="page-title">Dashboard</div>
-        <div class="page-sub">Multimodal Sentiment Analysis Overview — 2,104 reviews processed</div>
+    <div class="sidebar">
+      <div class="logo">
+        <div class="logo-icon"><i class="ti ti-brain"></i></div>
+        <span>CLIP<span class="accent">-CA-CG</span></span>
       </div>
-      <button class="btn btn-primary" onclick="goPage('upload')"><i class="ti ti-upload"></i> Upload CSV</button>
-    </div>
-
-    <div class="product-row">
-      <i class="ti ti-shopping-bag"></i>
-      <span>Product:</span>
-      <strong>Logitech MX Master 3S Wireless Mouse</strong>
-      <span>·</span><span>E-Commerce Dataset</span>
-      <span>·</span><span>2,104 reviews loaded</span>
-    </div>
-
-    <div class="progress-row">
-      <span class="prog-step done"><i class="ti ti-check" style="font-size:12px"></i> Preprocessing</span>
-      <span class="prog-arrow">›</span>
-      <span class="prog-step done"><i class="ti ti-check" style="font-size:12px"></i> Feature Extraction</span>
-      <span class="prog-arrow">›</span>
-      <span class="prog-step done"><i class="ti ti-check" style="font-size:12px"></i> CA Fusion & CG</span>
-      <span class="prog-arrow">›</span>
-      <span class="prog-step active"><i class="ti ti-loader-2" style="font-size:12px"></i> Prediction running…</span>
-    </div>
-
-    <div class="metrics" id="dash-metrics">
-      <div class="metric" onclick="filterDash('positive',this)">
-        <div class="metric-label">Positive</div>
-        <div class="metric-val" style="color:var(--emerald)">1,410</div>
-        <div class="metric-sub">67.0% of total</div>
-      </div>
-      <div class="metric" onclick="filterDash('neutral',this)">
-        <div class="metric-label">Neutral</div>
-        <div class="metric-val" style="color:var(--amber)">463</div>
-        <div class="metric-sub">22.0% of total</div>
-      </div>
-      <div class="metric" onclick="filterDash('negative',this)">
-        <div class="metric-label">Negative</div>
-        <div class="metric-val" style="color:var(--rose)">231</div>
-        <div class="metric-sub">11.0% of total</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Avg Confidence</div>
-        <div class="metric-val" style="color:var(--blue)">89.2%</div>
-        <div class="metric-sub">across all predictions</div>
+      <button class="snav active" onclick="goPage('dashboard')" id="nav-dashboard"><i
+          class="ti ti-layout-dashboard"></i> Dashboard</button>
+      <button class="snav" onclick="goPage('upload')" id="nav-upload"><i class="ti ti-upload"></i> Upload</button>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">Analysis</div>
+      <button class="snav" onclick="goPage('pipeline')" id="nav-pipeline"><i class="ti ti-topology-star-3"></i>
+        Pipeline</button>
+      <button class="snav" onclick="goPage('sentiment')" id="nav-sentiment"><i class="ti ti-chart-bar"></i>
+        Sentiment</button>
+      <div class="sidebar-divider"></div>
+      <button class="snav" onclick="goPage('settings')" id="nav-settings"><i class="ti ti-settings"></i>
+        Settings</button>
+      <div class="sidebar-footer">
+        <strong>CLIP-CA-CG</strong><br>
+        Lu et al. — Multimodal<br>Sentiment Analysis
       </div>
     </div>
 
-    <div class="cols-2">
-      <div class="card">
-        <div class="card-title">Recent Reviews</div>
-        <div class="filter-tabs" id="dash-ftabs" style="margin-bottom:10px;">
-          <button class="ftab active" onclick="setDashFilter('all',this)">All</button>
-          <button class="ftab" onclick="setDashFilter('positive',this)">Positive</button>
-          <button class="ftab" onclick="setDashFilter('neutral',this)">Neutral</button>
-          <button class="ftab" onclick="setDashFilter('negative',this)">Negative</button>
->>>>>>> Stashed changes
-        </div>
-        <button class="btn btn-primary" onclick="goPage('upload')">
-          <i class="ti ti-upload"></i> Upload CSV
-        </button>
-      </div>
+    <div class="main">
 
-<<<<<<< Updated upstream
-      <!-- Product info banner -->
-      <div class="product-row">
-        <i class="ti ti-shopping-bag"></i>
-        <span>Product:</span>
-        <strong>Logitech MX Master 3S Wireless Mouse</strong>
-        <span>&middot;</span>
-        <span>Shopee &amp; Lazada</span>
-        <span>&middot;</span>
-        <span>3,842 reviews loaded</span>
-      </div>
-
-      <!-- Pipeline progress -->
-      <div class="progress-row">
-        <span class="prog-step done"><i class="ti ti-check" style="font-size:11px;"></i> Data ingestion</span>
-        <span class="prog-arrow">&rsaquo;</span>
-        <span class="prog-step done"><i class="ti ti-check" style="font-size:11px;"></i> Preprocessing</span>
-        <span class="prog-arrow">&rsaquo;</span>
-        <span class="prog-step done"><i class="ti ti-check" style="font-size:11px;"></i> Stage 1 complete</span>
-        <span class="prog-arrow">&rsaquo;</span>
-        <span class="prog-step active">Stage 2 running&hellip;</span>
-      </div>
-
-      <!-- Metric cards -->
-      <div class="metrics" id="dash-metrics">
-        <div class="metric" onclick="filterDash('auth', this)">
-          <div class="metric-label">Authentic</div>
-          <div class="metric-val" style="color:var(--green);">2,104</div>
-          <div class="metric-sub">54.8% of total</div>
-        </div>
-        <div class="metric" onclick="filterDash('liv', this)">
-          <div class="metric-label">Vague / LIV</div>
-          <div class="metric-val" style="color:var(--amber);">891</div>
-          <div class="metric-sub">23.2% of total</div>
-        </div>
-        <div class="metric" onclick="filterDash('irr', this)">
-          <div class="metric-label">Irrelevant</div>
-          <div class="metric-val" style="color:var(--blue);">512</div>
-          <div class="metric-sub">13.3% of total</div>
-        </div>
-        <div class="metric" onclick="filterDash('dec', this)">
-          <div class="metric-label">Deceptive</div>
-          <div class="metric-val" style="color:var(--red);">335</div>
-          <div class="metric-sub">8.7% of total</div>
-        </div>
-      </div>
-
-      <!-- Reviews + charts -->
-      <div class="cols-2">
-
-        <!-- Recent reviews list -->
-        <div class="card">
-          <div class="card-title">Recent reviews</div>
-          <div class="filter-tabs" id="dash-ftabs" style="margin-bottom:10px;">
-            <button class="ftab active" onclick="setDashFilter('all', this)">All</button>
-            <button class="ftab" onclick="setDashFilter('auth', this)">Authentic</button>
-            <button class="ftab" onclick="setDashFilter('dec', this)">Deceptive</button>
-            <button class="ftab" onclick="setDashFilter('liv', this)">Vague</button>
-            <button class="ftab" onclick="setDashFilter('irr', this)">Irrelevant</button>
+      <div id="page-dashboard" class="page active">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Dashboard</div>
+            <div class="page-sub">Multimodal Sentiment Analysis Overview — 2,104 reviews processed</div>
           </div>
-          <div class="review-list" id="dash-review-list"></div>
+          <button class="btn btn-primary" onclick="goPage('upload')"><i class="ti ti-upload"></i> Upload CSV</button>
         </div>
 
-        <!-- Right column: charts + detail -->
-        <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="product-row">
+          <i class="ti ti-shopping-bag"></i>
+          <span>Product:</span>
+          <strong>Logitech MX Master 3S Wireless Mouse</strong>
+          <span>&middot;</span><span>E-Commerce Dataset</span>
+          <span>&middot;</span><span>2,104 reviews loaded</span>
+        </div>
 
-          <!-- Platform volume -->
+        <div class="progress-row">
+          <span class="prog-step done"><i class="ti ti-check" style="font-size:12px"></i> Preprocessing</span>
+          <span class="prog-arrow">&rsaquo;</span>
+          <span class="prog-step done"><i class="ti ti-check" style="font-size:12px"></i> Feature Extraction</span>
+          <span class="prog-arrow">&rsaquo;</span>
+          <span class="prog-step done"><i class="ti ti-check" style="font-size:12px"></i> CA Fusion &amp; CG</span>
+          <span class="prog-arrow">&rsaquo;</span>
+          <span class="prog-step active"><i class="ti ti-loader-2" style="font-size:12px"></i> Prediction
+            running&hellip;</span>
+        </div>
+
+        <div class="metrics" id="dash-metrics">
+          <div class="metric" onclick="filterDash('positive',this)">
+            <div class="metric-label">Positive</div>
+            <div class="metric-val" style="color:var(--emerald)">1,410</div>
+            <div class="metric-sub">67.0% of total</div>
+          </div>
+          <div class="metric" onclick="filterDash('neutral',this)">
+            <div class="metric-label">Neutral</div>
+            <div class="metric-val" style="color:var(--amber)">463</div>
+            <div class="metric-sub">22.0% of total</div>
+          </div>
+          <div class="metric" onclick="filterDash('negative',this)">
+            <div class="metric-label">Negative</div>
+            <div class="metric-val" style="color:var(--rose)">231</div>
+            <div class="metric-sub">11.0% of total</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Avg Confidence</div>
+            <div class="metric-val" style="color:var(--blue)">89.2%</div>
+            <div class="metric-sub">across all predictions</div>
+          </div>
+        </div>
+
+        <div class="cols-2">
           <div class="card">
-            <div class="card-title">Review Volume by Platform</div>
-            <div class="bar-row" style="margin:0 0 8px;">
-              <div class="bar-label" style="width:70px;display:flex;align-items:center;gap:6px;">
-                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#EE4D2D;"></span>
-                Shopee
-              </div>
-              <div class="bar-track">
-                <div class="bar-fill" style="width:61%;background:#EE4D2D;"></div>
-=======
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <div class="card">
-          <div class="card-title">Sentiment Distribution</div>
-          <div class="bar-row"><div class="bar-label">Positive</div><div class="bar-track"><div class="bar-fill" style="width:67%;background:var(--emerald)"></div></div><div class="bar-count">1,410</div></div>
-          <div class="bar-row"><div class="bar-label">Neutral</div><div class="bar-track"><div class="bar-fill" style="width:22%;background:var(--amber)"></div></div><div class="bar-count">463</div></div>
-          <div class="bar-row"><div class="bar-label">Negative</div><div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--rose)"></div></div><div class="bar-count">231</div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">System Actions</div>
-          <div class="bar-row"><div class="bar-label" style="width:100px">Highlighted</div><div class="bar-track"><div class="bar-fill" style="width:67%;background:var(--emerald)"></div></div><div class="bar-count">1,410</div></div>
-          <div class="bar-row"><div class="bar-label" style="width:100px">Logged</div><div class="bar-track"><div class="bar-fill" style="width:22%;background:var(--amber)"></div></div><div class="bar-count">463</div></div>
-          <div class="bar-row"><div class="bar-label" style="width:100px">Flagged</div><div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--rose)"></div></div><div class="bar-count">231</div></div>
-        </div>
-        <div class="card" id="dash-detail">
-          <div class="card-title">Review Detail</div>
-          <div style="font-size:12px;color:var(--text3);">Click a review to see its full pipeline analysis.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== UPLOAD ===================== -->
-  <div id="page-upload" class="page">
-    <div class="topbar">
-      <div>
-        <div class="page-title">Upload Reviews</div>
-        <div class="page-sub">Add review data for CLIP-CA-CG to analyze</div>
-      </div>
-    </div>
-
-    <div class="cols-2">
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <!-- CSV Upload -->
-        <div class="card">
-          <div class="card-title">CSV File Upload</div>
-          <div class="upload-zone" id="csv-zone" onclick="document.getElementById('csv-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropCSV(event)">
-            <i class="ti ti-file-spreadsheet" style="font-size:36px;margin-bottom:10px;display:block;color:var(--blue)"></i>
-            <div style="font-weight:600;color:var(--text2);margin-bottom:4px;">Drop CSV here or click to browse</div>
-            <div style="font-size:11px;">Required columns: product_id, product_title, review_text, review_image_urls, labels</div>
+            <div class="card-title">Recent Reviews</div>
+            <div class="filter-tabs" id="dash-ftabs" style="margin-bottom:10px;">
+              <button class="ftab active" onclick="setDashFilter('all',this)">All</button>
+              <button class="ftab" onclick="setDashFilter('positive',this)">Positive</button>
+              <button class="ftab" onclick="setDashFilter('neutral',this)">Neutral</button>
+              <button class="ftab" onclick="setDashFilter('negative',this)">Negative</button>
+            </div>
+            <div class="review-list" id="dash-review-list"></div>
           </div>
-          <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="handleCSV(this)">
-          <div id="csv-status" style="margin-top:10px;font-size:12px;"></div>
-        </div>
 
-        <!-- Image Upload -->
-        <div class="card">
-          <div class="card-title">Review Images (for ResNet-50)</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">Upload product photos. These are processed by ResNet-50 for visual feature extraction and CG alignment.</div>
-          <div class="upload-zone" id="img-zone" onclick="document.getElementById('img-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropImages(event)" style="padding:20px;">
-            <i class="ti ti-photo-up" style="font-size:30px;display:block;margin-bottom:8px;color:var(--blue)"></i>
-            <div style="font-weight:600;color:var(--text2);font-size:13px;">Drop images here or click to browse</div>
-            <div style="font-size:11px;margin-top:3px;">JPG, PNG, WEBP · Multiple files supported</div>
-          </div>
-          <input type="file" id="img-input" accept="image/*" multiple style="display:none" onchange="handleImages(this)">
-          <div id="img-preview-grid" class="img-grid"></div>
-          <div id="img-count" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <!-- Single review test -->
-        <div class="card">
-          <div class="card-title">Test a Single Review</div>
-          <div class="section-label">Review text</div>
-          <textarea id="test-text" rows="3" placeholder="e.g. Ergonomic sa kamay at mabilis mag-connect ang bluetooth!"></textarea>
-
-          <div style="margin-top:12px;">
-            <div class="section-label">Review image (optional)</div>
-            <div style="display:flex;gap:12px;align-items:flex-start;">
-              <div id="single-img-preview" style="width:80px;height:80px;flex-shrink:0;">
-                <div class="img-placeholder" onclick="document.getElementById('single-img-input').click()">
-                  <i class="ti ti-photo-plus"></i>
-                  <span>Add</span>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="card-title">Sentiment Distribution</div>
+              <div class="bar-row">
+                <div class="bar-label">Positive</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:67%;background:var(--emerald)"></div>
                 </div>
+                <div class="bar-count">1,410</div>
               </div>
-              <div style="flex:1;">
-                <input type="file" id="single-img-input" accept="image/*" style="display:none" onchange="handleSingleImg(this)">
-                <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">The image will be processed by ResNet-50 for CG alignment with the review text.</div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                  <div>
-                    <div class="section-label">Stars</div>
-                    <select id="test-stars">
-                      <option value="5">★★★★★ 5</option>
-                      <option value="4">★★★★☆ 4</option>
-                      <option value="3">★★★☆☆ 3</option>
-                      <option value="2">★★☆☆☆ 2</option>
-                      <option value="1">★☆☆☆☆ 1</option>
-                    </select>
-                  </div>
+              <div class="bar-row">
+                <div class="bar-label">Neutral</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:22%;background:var(--amber)"></div>
                 </div>
->>>>>>> Stashed changes
+                <div class="bar-count">463</div>
               </div>
-              <div class="bar-count" style="width:40px;">2,343</div>
+              <div class="bar-row">
+                <div class="bar-label">Negative</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:11%;background:var(--rose)"></div>
+                </div>
+                <div class="bar-count">231</div>
+              </div>
             </div>
-            <div class="bar-row" style="margin:0;">
-              <div class="bar-label" style="width:70px;display:flex;align-items:center;gap:6px;">
-                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0F136D;"></span>
-                Lazada
+            <div class="card">
+              <div class="card-title">System Actions</div>
+              <div class="bar-row">
+                <div class="bar-label" style="width:100px">Highlighted</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:67%;background:var(--emerald)"></div>
+                </div>
+                <div class="bar-count">1,410</div>
               </div>
-              <div class="bar-track">
-                <div class="bar-fill" style="width:39%;background:#0F136D;"></div>
+              <div class="bar-row">
+                <div class="bar-label" style="width:100px">Logged</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:22%;background:var(--amber)"></div>
+                </div>
+                <div class="bar-count">463</div>
               </div>
-              <div class="bar-count" style="width:40px;">1,499</div>
+              <div class="bar-row">
+                <div class="bar-label" style="width:100px">Flagged</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:11%;background:var(--rose)"></div>
+                </div>
+                <div class="bar-count">231</div>
+              </div>
+            </div>
+            <div class="card" id="dash-detail">
+              <div class="card-title">Review Detail</div>
+              <div style="font-size:12px;color:var(--text3);">Click a review to see its full pipeline analysis.</div>
             </div>
           </div>
-
-<<<<<<< Updated upstream
-          <!-- Classification breakdown -->
-          <div class="card">
-            <div class="card-title">Classification breakdown</div>
-            <div class="bar-row">
-              <div class="bar-label">Authentic</div>
-              <div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--teal);"></div></div>
-              <div class="bar-count">2104</div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-label">Vague</div>
-              <div class="bar-track"><div class="bar-fill" style="width:23%;background:var(--orange);"></div></div>
-              <div class="bar-count">891</div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-label">Irrelevant</div>
-              <div class="bar-track"><div class="bar-fill" style="width:13%;background:var(--cobalt);"></div></div>
-              <div class="bar-count">512</div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-label">Deceptive</div>
-              <div class="bar-track"><div class="bar-fill" style="width:9%;background:var(--coral);"></div></div>
-              <div class="bar-count">335</div>
-            </div>
-          </div>
-
-          <!-- Review detail panel -->
-          <div class="card" id="dash-detail">
-            <div class="card-title">Review detail</div>
-            <div style="font-size:12px;color:var(--text3);">Click a review to see its analysis.</div>
-          </div>
-
-=======
-          <button class="btn btn-primary" style="margin-top:14px;width:100%;" onclick="classifyTest()">
-            <i class="ti ti-sparkles"></i> Run through CLIP-CA-CG Pipeline
-          </button>
-          <div id="test-result" style="margin-top:14px;"></div>
-        </div>
-
-        <!-- Dataset config -->
-        <div class="card">
-          <div class="card-title">Dataset Settings</div>
-          <div class="section-label" style="margin-bottom:4px;">Product name</div>
-          <input type="text" id="product-name" value="Logitech MX Master 3S Wireless Mouse" style="margin-bottom:12px;">
-          <button class="btn btn-primary" onclick="fakeLoad()"><i class="ti ti-database-import"></i> Load sample dataset</button>
->>>>>>> Stashed changes
-        </div>
-      </div>
-    </div>
-    <!-- /Dashboard page -->
-
-<<<<<<< Updated upstream
-
-    <!-- ── Upload page ── -->
-    <div id="page-upload" class="page">
-
-      <div class="topbar">
-        <div>
-          <div class="page-title">Upload reviews</div>
-          <div class="page-sub">Add review data for AuthentiCheck to analyze</div>
         </div>
       </div>
 
-      <div class="cols-2">
-
-        <!-- Left column: file uploads -->
-        <div style="display:flex;flex-direction:column;gap:14px;">
-
-          <!-- CSV upload -->
-          <div class="card">
-            <div class="card-title">CSV file upload</div>
-            <div class="upload-zone"
-                 id="csv-zone"
-                 onclick="document.getElementById('csv-input').click()"
-                 ondragover="dragOver(event)"
-                 ondragleave="dragLeave(event)"
-                 ondrop="dropCSV(event)">
-              <i class="ti ti-file-spreadsheet" style="font-size:32px;margin-bottom:8px;display:block;color:var(--primary);"></i>
-              <div style="font-weight:500;color:var(--text2);margin-bottom:4px;">Drop CSV here or click to browse</div>
-              <div style="font-size:11px;">Required columns: review_text, star_rating, platform, product_name</div>
-            </div>
-            <input type="file" id="csv-input" accept=".csv" style="display:none;" onchange="handleCSV(this)">
-            <div id="csv-status" style="margin-top:8px;font-size:12px;"></div>
+      <div id="page-upload" class="page">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Upload Reviews</div>
+            <div class="page-sub">Add review data for CLIP-CA-CG to analyze</div>
           </div>
-
-          <!-- Image upload -->
-          <div class="card">
-            <div class="card-title">Review images</div>
-            <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">
-              Upload customer-submitted product photos. These are used by M-CLIP for image-text consistency checking.
-            </div>
-            <div class="upload-zone"
-                 id="img-zone"
-                 style="padding:18px;"
-                 onclick="document.getElementById('img-input').click()"
-                 ondragover="dragOver(event)"
-                 ondragleave="dragLeave(event)"
-                 ondrop="dropImages(event)">
-              <i class="ti ti-photo-up" style="font-size:28px;display:block;margin-bottom:6px;color:var(--primary);"></i>
-              <div style="font-weight:500;color:var(--text2);font-size:13px;">Drop images here or click to browse</div>
-              <div style="font-size:11px;margin-top:2px;">JPG, PNG, WEBP &middot; Multiple files supported</div>
-            </div>
-            <input type="file" id="img-input" accept="image/*" multiple style="display:none;" onchange="handleImages(this)">
-            <div id="img-preview-grid" class="img-grid" style="margin-top:10px;"></div>
-            <div id="img-count" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
-          </div>
-
         </div>
 
-        <!-- Right column: test classifier + platform config -->
-        <div style="display:flex;flex-direction:column;gap:14px;">
-
-          <!-- Single review test -->
-          <div class="card">
-            <div class="card-title">Test a single review</div>
-
-            <div class="section-label">Review text</div>
-            <textarea id="test-text" rows="3"
-              placeholder="e.g. Ergonomic sa kamay at mabilis mag-connect ang bluetooth!"></textarea>
-
-            <div style="margin-top:10px;">
-              <div class="section-label">Review image (optional)</div>
-              <div style="display:flex;gap:10px;align-items:flex-start;">
-
-                <div id="single-img-preview" style="width:80px;height:80px;flex-shrink:0;">
-                  <div class="img-placeholder" onclick="document.getElementById('single-img-input').click()">
-                    <i class="ti ti-photo-plus"></i>
-                    <span>Add photo</span>
-                  </div>
+        <div class="cols-2">
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <!-- CSV Upload -->
+            <div class="card">
+              <div class="card-title">CSV File Upload</div>
+              <div class="upload-zone" id="csv-zone" onclick="document.getElementById('csv-input').click()"
+                ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropCSV(event)">
+                <i class="ti ti-file-spreadsheet"
+                  style="font-size:36px;margin-bottom:10px;display:block;color:var(--blue)"></i>
+                <div style="font-weight:600;color:var(--text2);margin-bottom:4px;">Drop CSV here or click to browse
                 </div>
+                <div style="font-size:11px;">Required columns: product_id, product_title, review_text,
+                  review_image_urls, labels</div>
+              </div>
+              <input type="file" id="csv-input" accept=".csv" style="display:none" onchange="handleCSV(this)">
+              <div id="csv-status" style="margin-top:10px;font-size:12px;"></div>
+            </div>
 
-                <div style="flex:1;">
-                  <input type="file" id="single-img-input" accept="image/*" style="display:none;" onchange="handleSingleImg(this)">
-                  <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">
-                    This simulates what M-CLIP checks — whether the photo matches the review text.
+            <!-- Image Upload -->
+            <div class="card">
+              <div class="card-title">Review Images (for ResNet-50)</div>
+              <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">Upload product photos. These are
+                processed by ResNet-50 for visual feature extraction and CG alignment.</div>
+              <div class="upload-zone" id="img-zone" onclick="document.getElementById('img-input').click()"
+                ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropImages(event)"
+                style="padding:20px;">
+                <i class="ti ti-photo-up" style="font-size:30px;display:block;margin-bottom:8px;color:var(--blue)"></i>
+                <div style="font-weight:600;color:var(--text2);font-size:13px;">Drop images here or click to browse
+                </div>
+                <div style="font-size:11px;margin-top:3px;">JPG, PNG, WEBP &middot; Multiple files supported</div>
+              </div>
+              <input type="file" id="img-input" accept="image/*" multiple style="display:none"
+                onchange="handleImages(this)">
+              <div id="img-preview-grid" class="img-grid"></div>
+              <div id="img-count" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <!-- Single review test -->
+            <div class="card">
+              <div class="card-title">Test a Single Review</div>
+              <div class="section-label">Review text</div>
+              <textarea id="test-text" rows="3"
+                placeholder="e.g. Ergonomic sa kamay at mabilis mag-connect ang bluetooth!"></textarea>
+
+              <div style="margin-top:12px;">
+                <div class="section-label">Review image (optional)</div>
+                <div style="display:flex;gap:12px;align-items:flex-start;">
+                  <div id="single-img-preview" style="width:80px;height:80px;flex-shrink:0;">
+                    <div class="img-placeholder" onclick="document.getElementById('single-img-input').click()">
+                      <i class="ti ti-photo-plus"></i>
+                      <span>Add</span>
+                    </div>
                   </div>
-                  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <div style="flex:1;">
+                    <input type="file" id="single-img-input" accept="image/*" style="display:none"
+                      onchange="handleSingleImg(this)">
+                    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">The image will be processed by
+                      ResNet-50 for CG alignment with the review text.</div>
                     <div>
                       <div class="section-label">Stars</div>
                       <select id="test-stars">
@@ -685,830 +243,303 @@ select:focus{outline:none;border-color:var(--blue);}
                         <option value="1">★☆☆☆☆ 1</option>
                       </select>
                     </div>
-                    <div>
-                      <div class="section-label">Platform</div>
-                      <select id="test-platform">
-                        <option>Shopee</option>
-                        <option>Lazada</option>
-                      </select>
-                    </div>
                   </div>
                 </div>
+              </div>
 
+              <button class="btn btn-primary" style="margin-top:14px;width:100%;" onclick="classifyTest()">
+                <i class="ti ti-sparkles"></i> Run through CLIP-CA-CG Pipeline
+              </button>
+              <div id="test-result" style="margin-top:14px;"></div>
+            </div>
+
+            <!-- Dataset config -->
+            <div class="card">
+              <div class="card-title">Dataset Settings</div>
+              <div class="section-label" style="margin-bottom:4px;">Product name</div>
+              <input type="text" id="product-name" value="Logitech MX Master 3S Wireless Mouse"
+                style="margin-bottom:12px;">
+              <button class="btn btn-primary" onclick="fakeLoad()"><i class="ti ti-database-import"></i> Load sample
+                dataset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-pipeline" class="page">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Processing Pipeline</div>
+            <div class="page-sub">3-Stage Multimodal Analysis — Preprocessing &rarr; Feature Extraction &rarr; CA Fusion
+              &amp; CG</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline" onclick="showToast('Exported to CSV!')"><i class="ti ti-download"></i>
+              Export</button>
+            <button class="btn btn-outline btn-sm" onclick="showToast('Refreshed!')"><i
+                class="ti ti-refresh"></i></button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:12px 18px;">
+          <div class="filter-tabs" id="pipeline-tabs">
+            <button class="ftab active" onclick="setPipelineFilter('all',this)">All (2104)</button>
+            <button class="ftab" onclick="setPipelineFilter('positive',this)">Positive (1410)</button>
+            <button class="ftab" onclick="setPipelineFilter('neutral',this)">Neutral (463)</button>
+            <button class="ftab" onclick="setPipelineFilter('negative',this)">Negative (231)</button>
+          </div>
+        </div>
+
+        <div class="cols-2">
+          <div class="card">
+            <div class="review-list" id="pipeline-list"></div>
+          </div>
+          <div class="card" id="pipeline-detail">
+            <div class="card-title">Pipeline Analysis</div>
+            <div style="font-size:12px;color:var(--text3);">Select a review to inspect its full pipeline scores.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-sentiment" class="page">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Sentiment Analysis</div>
+            <div class="page-sub">Polarity distribution and system action summary — 2,104 reviews</div>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Positive</div>
+            <div class="metric-val" style="color:var(--emerald)">67%</div>
+            <div class="metric-sub">1,410 reviews &rarr; Highlighted</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Neutral</div>
+            <div class="metric-val" style="color:var(--amber)">22%</div>
+            <div class="metric-sub">463 reviews &rarr; Logged</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Negative</div>
+            <div class="metric-val" style="color:var(--rose)">11%</div>
+            <div class="metric-sub">231 reviews &rarr; Flagged</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Product Alerts</div>
+            <div class="metric-val" style="color:var(--purple)">2</div>
+            <div class="metric-sub">sustained negative patterns</div>
+          </div>
+        </div>
+
+        <div class="cols-2">
+          <div class="card">
+            <div class="card-title">System Action Summary</div>
+            <div class="detail-row">
+              <span class="detail-label">Highlighted / Approved</span>
+              <div style="display:flex;align-items:center;gap:8px;"><span class="action-badge approved">1,410
+                  reviews</span><span style="font-size:11px;color:var(--text3);">Positive sentiment</span></div>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Logged</span>
+              <div style="display:flex;align-items:center;gap:8px;"><span class="action-badge logged">463
+                  reviews</span><span style="font-size:11px;color:var(--text3);">Neutral / factual</span></div>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Flagged for Support</span>
+              <div style="display:flex;align-items:center;gap:8px;"><span class="action-badge flagged">231
+                  reviews</span><span style="font-size:11px;color:var(--text3);">Negative sentiment</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Product-Level Alerts</div>
+            <div
+              style="padding:10px;border-radius:var(--radius);background:var(--rose-light);border:1px solid rgba(244,63,94,0.2);margin-bottom:10px;">
+              <div style="font-size:13px;font-weight:600;color:var(--rose);margin-bottom:4px;">⚠ Bluetooth Connectivity
+                Issues</div>
+              <div style="font-size:12px;color:var(--text2);">Sustained negative pattern across 45+ reviews mentioning
+                bluetooth lag, disconnection. Product flagged for quality review.</div>
+            </div>
+            <div
+              style="padding:10px;border-radius:var(--radius);background:var(--amber-light);border:1px solid rgba(245,158,11,0.2);">
+              <div style="font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px;">⚡ Scroll Wheel Defects
+              </div>
+              <div style="font-size:12px;color:var(--text2);">12 reviews with negative image-text alignment showing
+                physical scroll wheel damage. Monitoring threshold.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Model Performance Comparison -->
+        <div class="card">
+          <div class="card-title">Model Performance Comparison</div>
+          <div class="perf-grid">
+            <div class="perf-item">
+              <div class="perf-metric-name">Accuracy</div>
+              <div class="bar-row" style="margin:0 0 5px;">
+                <div class="bar-label" style="width:80px;font-size:11px;">CLIP-CA-CG</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:91%;background:var(--blue)"></div>
+                </div>
+                <div class="bar-count">91%</div>
+              </div>
+              <div class="bar-row" style="margin:0 0 5px;">
+                <div class="bar-label" style="width:80px;font-size:11px;">Text-only</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:74%;background:var(--text3)"></div>
+                </div>
+                <div class="bar-count">74%</div>
+              </div>
+              <div class="bar-row" style="margin:0;">
+                <div class="bar-label" style="width:80px;font-size:11px;">Image-only</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:58%;background:var(--text3)"></div>
+                </div>
+                <div class="bar-count">58%</div>
               </div>
             </div>
-
-            <button class="btn btn-primary" style="margin-top:12px;width:100%;" onclick="classifyTest()">
-              <i class="ti ti-sparkles"></i> Classify this review
-            </button>
-            <div id="test-result" style="margin-top:12px;"></div>
-          </div>
-
-          <!-- Platform & product config -->
-          <div class="card">
-            <div class="card-title">Platform &amp; product settings</div>
-            <div class="section-label" style="margin-bottom:4px;">Product name</div>
-            <input type="text" id="product-name" value="Logitech MX Master 3S Wireless Mouse" style="margin-bottom:10px;">
-            <div class="section-label" style="margin-bottom:6px;">Platforms</div>
-            <div style="display:flex;gap:12px;font-size:13px;">
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" checked> Shopee
-              </label>
-              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                <input type="checkbox" checked> Lazada
-              </label>
+            <div class="perf-item">
+              <div class="perf-metric-name">F1-Score</div>
+              <div class="bar-row" style="margin:0 0 5px;">
+                <div class="bar-label" style="width:80px;font-size:11px;">CLIP-CA-CG</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:89%;background:var(--blue)"></div>
+                </div>
+                <div class="bar-count">89%</div>
+              </div>
+              <div class="bar-row" style="margin:0 0 5px;">
+                <div class="bar-label" style="width:80px;font-size:11px;">Text-only</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:71%;background:var(--text3)"></div>
+                </div>
+                <div class="bar-count">71%</div>
+              </div>
+              <div class="bar-row" style="margin:0;">
+                <div class="bar-label" style="width:80px;font-size:11px;">Image-only</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:55%;background:var(--text3)"></div>
+                </div>
+                <div class="bar-count">55%</div>
+              </div>
             </div>
-            <button class="btn btn-primary" style="margin-top:12px;" onclick="fakeLoad()">
-              <i class="ti ti-database-import"></i> Load sample dataset
-            </button>
+            <div class="perf-item">
+              <div class="perf-metric-name">Precision</div>
+              <div class="bar-row" style="margin:0 0 5px;">
+                <div class="bar-label" style="width:80px;font-size:11px;">CLIP-CA-CG</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:90%;background:var(--blue)"></div>
+                </div>
+                <div class="bar-count">90%</div>
+              </div>
+              <div class="bar-row" style="margin:0 0 5px;">
+                <div class="bar-label" style="width:80px;font-size:11px;">Text-only</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:73%;background:var(--text3)"></div>
+                </div>
+                <div class="bar-count">73%</div>
+              </div>
+              <div class="bar-row" style="margin:0;">
+                <div class="bar-label" style="width:80px;font-size:11px;">Image-only</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:56%;background:var(--text3)"></div>
+                </div>
+                <div class="bar-count">56%</div>
+              </div>
+            </div>
+            <div class="perf-item">
+              <div class="perf-metric-name">Recall</div>
+              <div class="bar-row" style="margin:0 0 5px;">
+                <div class="bar-label" style="width:80px;font-size:11px;">CLIP-CA-CG</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:88%;background:var(--blue)"></div>
+                </div>
+                <div class="bar-count">88%</div>
+              </div>
+              <div class="bar-row" style="margin:0 0 5px;">
+                <div class="bar-label" style="width:80px;font-size:11px;">Text-only</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:70%;background:var(--text3)"></div>
+                </div>
+                <div class="bar-count">70%</div>
+              </div>
+              <div class="bar-row" style="margin:0;">
+                <div class="bar-label" style="width:80px;font-size:11px;">Image-only</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:54%;background:var(--text3)"></div>
+                </div>
+                <div class="bar-count">54%</div>
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
 
-=======
-  <!-- ===================== PIPELINE ===================== -->
-  <div id="page-pipeline" class="page">
-    <div class="topbar">
-      <div>
-        <div class="page-title">Processing Pipeline</div>
-        <div class="page-sub">3-Stage Multimodal Analysis — Preprocessing → Feature Extraction → CA Fusion & CG</div>
+      <div id="page-settings" class="page">
+        <div class="topbar">
+          <div class="page-title">Settings</div>
+        </div>
+        <div class="cols-2">
+          <div class="card">
+            <div class="card-title">Model Configuration</div>
+            <div class="detail-row"><span class="detail-label">Text Encoder</span><span class="chip">RoBERTa</span>
+            </div>
+            <div class="detail-row"><span class="detail-label">Image Encoder</span><span class="chip">ResNet-50</span>
+            </div>
+            <div class="detail-row"><span class="detail-label">Fusion Module</span><span class="chip">Cross-Attention
+                (CA)</span></div>
+            <div class="detail-row"><span class="detail-label">Alignment &amp; Gating</span><span
+                class="chip">Cross-modal Gating (CG)</span></div>
+            <div class="detail-row"><span class="detail-label">Classifier</span><span class="chip">Sentiment
+                (3-class)</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Pipeline Configuration</div>
+            <div class="detail-row"><span class="detail-label">Stage 1</span><span class="chip">Multimodal
+                Preprocessing</span></div>
+            <div class="detail-row"><span class="detail-label">Stage 2</span><span class="chip">Unimodal Feature
+                Extraction</span></div>
+            <div class="detail-row"><span class="detail-label">Stage 3</span><span class="chip">CA Fusion &amp; CG
+                Alignment</span></div>
+            <div class="detail-row"><span class="detail-label">Output</span><span class="chip">Positive / Neutral /
+                Negative + Confidence</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Data &amp; Privacy</div>
+            <div class="detail-row"><span class="detail-label">Anonymize usernames</span><input type="checkbox" checked>
+            </div>
+            <div class="detail-row"><span class="detail-label">Store raw images</span><input type="checkbox"></div>
+            <div class="detail-row"><span class="detail-label">Academic use only</span><input type="checkbox" checked>
+            </div>
+            <div style="margin-top:14px;">
+              <button class="btn btn-danger btn-sm" onclick="showToast('Dataset cleared!')"><i class="ti ti-trash"></i>
+                Clear dataset</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">API Endpoints</div>
+            <div class="detail-row"><span class="detail-label">/api/upload/*</span><span class="chip mono">POST</span>
+            </div>
+            <div class="detail-row"><span class="detail-label">/api/status/*</span><span class="chip mono">GET</span>
+            </div>
+            <div class="detail-row"><span class="detail-label">/api/results/*</span><span class="chip mono">GET</span>
+            </div>
+            <div class="detail-row"><span class="detail-label">/api/export/*</span><span class="chip mono">GET</span>
+            </div>
+            <div
+              style="margin-top:10px;font-size:11px;color:var(--text3);padding:8px 10px;border-radius:var(--radius);background:var(--surface2);border:1px solid var(--border);">
+              <i class="ti ti-info-circle" style="margin-right:4px;"></i> Backend API is under development. Frontend
+              currently uses simulated demo data.
+            </div>
+          </div>
+        </div>
       </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-outline" onclick="showToast('Exported to CSV!')"><i class="ti ti-download"></i> Export</button>
-        <button class="btn btn-outline btn-sm" onclick="showToast('Refreshed!')"><i class="ti ti-refresh"></i></button>
-      </div>
-    </div>
 
-    <div class="card" style="padding:12px 18px;">
-      <div class="filter-tabs" id="pipeline-tabs">
-        <button class="ftab active" onclick="setPipelineFilter('all',this)">All (2104)</button>
-        <button class="ftab" onclick="setPipelineFilter('positive',this)">Positive (1410)</button>
-        <button class="ftab" onclick="setPipelineFilter('neutral',this)">Neutral (463)</button>
-        <button class="ftab" onclick="setPipelineFilter('negative',this)">Negative (231)</button>
-      </div>
-    </div>
-
-    <div class="cols-2">
-      <div class="card">
-        <div class="review-list" id="pipeline-list"></div>
-      </div>
-      <div class="card" id="pipeline-detail">
-        <div class="card-title">Pipeline Analysis</div>
-        <div style="font-size:12px;color:var(--text3);">Select a review to inspect its full pipeline scores.</div>
-      </div>
     </div>
   </div>
 
-  <!-- ===================== SENTIMENT ===================== -->
-  <div id="page-sentiment" class="page">
-    <div class="topbar">
-      <div>
-        <div class="page-title">Sentiment Analysis</div>
-        <div class="page-sub">Polarity distribution and system action summary — 2,104 reviews</div>
-      </div>
-    </div>
+  <div class="toast" id="toast"></div>
 
-    <div class="metrics">
-      <div class="metric"><div class="metric-label">Positive</div><div class="metric-val" style="color:var(--emerald)">67%</div><div class="metric-sub">1,410 reviews → Highlighted</div></div>
-      <div class="metric"><div class="metric-label">Neutral</div><div class="metric-val" style="color:var(--amber)">22%</div><div class="metric-sub">463 reviews → Logged</div></div>
-      <div class="metric"><div class="metric-label">Negative</div><div class="metric-val" style="color:var(--rose)">11%</div><div class="metric-sub">231 reviews → Flagged</div></div>
-      <div class="metric"><div class="metric-label">Product Alerts</div><div class="metric-val" style="color:var(--purple)">2</div><div class="metric-sub">sustained negative patterns</div></div>
-    </div>
-
-    <div class="cols-2">
-      <div class="card">
-        <div class="card-title">System Action Summary</div>
-        <div class="detail-row"><span class="detail-label">Highlighted / Approved</span><div style="display:flex;align-items:center;gap:8px;"><span class="action-badge approved">1,410 reviews</span><span style="font-size:11px;color:var(--text3);">Positive sentiment</span></div></div>
-        <div class="detail-row"><span class="detail-label">Logged</span><div style="display:flex;align-items:center;gap:8px;"><span class="action-badge logged">463 reviews</span><span style="font-size:11px;color:var(--text3);">Neutral / factual</span></div></div>
-        <div class="detail-row"><span class="detail-label">Flagged for Support</span><div style="display:flex;align-items:center;gap:8px;"><span class="action-badge flagged">231 reviews</span><span style="font-size:11px;color:var(--text3);">Negative sentiment</span></div></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Product-Level Alerts</div>
-        <div style="padding:10px;border-radius:var(--radius);background:var(--rose-light);border:1px solid rgba(244,63,94,0.2);margin-bottom:10px;">
-          <div style="font-size:13px;font-weight:600;color:var(--rose);margin-bottom:4px;">⚠ Bluetooth Connectivity Issues</div>
-          <div style="font-size:12px;color:var(--text2);">Sustained negative pattern across 45+ reviews mentioning bluetooth lag, disconnection. Product flagged for quality review.</div>
-        </div>
-        <div style="padding:10px;border-radius:var(--radius);background:var(--amber-light);border:1px solid rgba(245,158,11,0.2);">
-          <div style="font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px;">⚡ Scroll Wheel Defects</div>
-          <div style="font-size:12px;color:var(--text2);">12 reviews with negative image-text alignment showing physical scroll wheel damage. Monitoring threshold.</div>
->>>>>>> Stashed changes
-        </div>
-      </div>
-    </div>
-    <!-- /Upload page -->
-
-<<<<<<< Updated upstream
-
-    <!-- ── Classification page ── -->
-    <div id="page-classify" class="page">
-
-      <div class="topbar">
-        <div>
-          <div class="page-title">Classification results</div>
-          <div class="page-sub">Stage 1 — Review quality assessment</div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-outline" onclick="showToast('Exported to CSV!')">
-            <i class="ti ti-download"></i> Export
-          </button>
-          <button class="btn btn-outline btn-sm" onclick="showToast('Refreshed!')">
-            <i class="ti ti-refresh"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="card" style="padding:12px 16px;">
-        <div class="filter-tabs" id="classify-tabs">
-          <button class="ftab active" onclick="setClassifyFilter('all', this)">All (3842)</button>
-          <button class="ftab" onclick="setClassifyFilter('auth', this)">Authentic (2104)</button>
-          <button class="ftab" onclick="setClassifyFilter('dec', this)">Deceptive (335)</button>
-          <button class="ftab" onclick="setClassifyFilter('liv', this)">Vague (891)</button>
-          <button class="ftab" onclick="setClassifyFilter('irr', this)">Irrelevant (512)</button>
-        </div>
-      </div>
-
-      <div class="cols-2">
-        <div class="card">
-          <div class="review-list" id="classify-list"></div>
-        </div>
-        <div class="card" id="classify-detail">
-          <div class="card-title">Review detail</div>
-          <div style="font-size:12px;color:var(--text3);">Select a review to inspect its scores.</div>
-=======
-    <!-- Model Performance -->
-    <div class="card">
-      <div class="card-title">Model Performance Comparison</div>
-      <div class="perf-grid">
-        <div class="perf-item">
-          <div class="perf-metric-name">Accuracy</div>
-          <div class="bar-row" style="margin:0 0 5px;"><div class="bar-label" style="width:80px;font-size:11px;">CLIP-CA-CG</div><div class="bar-track"><div class="bar-fill" style="width:91%;background:var(--blue)"></div></div><div class="bar-count">91%</div></div>
-          <div class="bar-row" style="margin:0 0 5px;"><div class="bar-label" style="width:80px;font-size:11px;">Text-only</div><div class="bar-track"><div class="bar-fill" style="width:74%;background:var(--text3)"></div></div><div class="bar-count">74%</div></div>
-          <div class="bar-row" style="margin:0;"><div class="bar-label" style="width:80px;font-size:11px;">Image-only</div><div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--text3)"></div></div><div class="bar-count">58%</div></div>
-        </div>
-        <div class="perf-item">
-          <div class="perf-metric-name">F1-Score</div>
-          <div class="bar-row" style="margin:0 0 5px;"><div class="bar-label" style="width:80px;font-size:11px;">CLIP-CA-CG</div><div class="bar-track"><div class="bar-fill" style="width:89%;background:var(--blue)"></div></div><div class="bar-count">89%</div></div>
-          <div class="bar-row" style="margin:0 0 5px;"><div class="bar-label" style="width:80px;font-size:11px;">Text-only</div><div class="bar-track"><div class="bar-fill" style="width:71%;background:var(--text3)"></div></div><div class="bar-count">71%</div></div>
-          <div class="bar-row" style="margin:0;"><div class="bar-label" style="width:80px;font-size:11px;">Image-only</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--text3)"></div></div><div class="bar-count">55%</div></div>
-        </div>
-        <div class="perf-item">
-          <div class="perf-metric-name">Precision</div>
-          <div class="bar-row" style="margin:0 0 5px;"><div class="bar-label" style="width:80px;font-size:11px;">CLIP-CA-CG</div><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--blue)"></div></div><div class="bar-count">90%</div></div>
-          <div class="bar-row" style="margin:0 0 5px;"><div class="bar-label" style="width:80px;font-size:11px;">Text-only</div><div class="bar-track"><div class="bar-fill" style="width:73%;background:var(--text3)"></div></div><div class="bar-count">73%</div></div>
-          <div class="bar-row" style="margin:0;"><div class="bar-label" style="width:80px;font-size:11px;">Image-only</div><div class="bar-track"><div class="bar-fill" style="width:56%;background:var(--text3)"></div></div><div class="bar-count">56%</div></div>
-        </div>
-        <div class="perf-item">
-          <div class="perf-metric-name">Recall</div>
-          <div class="bar-row" style="margin:0 0 5px;"><div class="bar-label" style="width:80px;font-size:11px;">CLIP-CA-CG</div><div class="bar-track"><div class="bar-fill" style="width:88%;background:var(--blue)"></div></div><div class="bar-count">88%</div></div>
-          <div class="bar-row" style="margin:0 0 5px;"><div class="bar-label" style="width:80px;font-size:11px;">Text-only</div><div class="bar-track"><div class="bar-fill" style="width:70%;background:var(--text3)"></div></div><div class="bar-count">70%</div></div>
-          <div class="bar-row" style="margin:0;"><div class="bar-label" style="width:80px;font-size:11px;">Image-only</div><div class="bar-track"><div class="bar-fill" style="width:54%;background:var(--text3)"></div></div><div class="bar-count">54%</div></div>
->>>>>>> Stashed changes
-        </div>
-      </div>
-    </div>
-    <!-- /Classification page -->
-
-<<<<<<< Updated upstream
-
-    <!-- ── Sentiment (ABSA) page ── -->
-    <div id="page-sentiment" class="page">
-
-      <div class="topbar">
-        <div>
-          <div class="page-title">Sentiment analysis (ABSA)</div>
-          <div class="page-sub">Stage 2 — Authentic reviews only (2,104 reviews)</div>
-        </div>
-      </div>
-
-      <!-- Summary metrics -->
-      <div class="metrics">
-        <div class="metric">
-          <div class="metric-label">Overall positive</div>
-          <div class="metric-val" style="color:#3B6D11;">67%</div>
-          <div class="metric-sub">1,410 reviews</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Overall neutral</div>
-          <div class="metric-val" style="color:var(--text2);">22%</div>
-          <div class="metric-sub">463 reviews</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Overall negative</div>
-          <div class="metric-val" style="color:var(--red);">11%</div>
-          <div class="metric-sub">231 reviews</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Aspects detected</div>
-          <div class="metric-val" style="color:var(--primary);">8</div>
-          <div class="metric-sub">across all reviews</div>
-        </div>
-      </div>
-
-      <!-- Aspect list + detail -->
-      <div class="cols-2">
-        <div class="card">
-          <div class="card-title">Aspect breakdown — click to explore</div>
-          <div id="absa-list"></div>
-        </div>
-        <div class="card" id="absa-detail">
-          <div class="card-title">Aspect detail</div>
-          <div style="font-size:12px;color:var(--text3);">Click an aspect on the left.</div>
-        </div>
-      </div>
-
-      <!-- Platform sentiment comparison -->
-      <div class="card" style="margin-top:14px;">
-        <div class="card-title">Platform Sentiment Comparison: Shopee vs Lazada</div>
-        <div class="cols-2">
-
-          <div>
-            <div style="font-weight:600;color:#EE4D2D;font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#EE4D2D;"></span>
-              Shopee
-            </div>
-            <div class="bar-row" style="margin:0 0 6px;">
-              <div class="bar-label" style="width:60px;">Positive</div>
-              <div class="bar-track"><div class="bar-fill" style="width:72%;background:#3B6D11;"></div></div>
-              <div class="bar-count" style="width:30px;">72%</div>
-            </div>
-            <div class="bar-row" style="margin:0 0 6px;">
-              <div class="bar-label" style="width:60px;">Neutral</div>
-              <div class="bar-track"><div class="bar-fill" style="width:19%;background:var(--text3);"></div></div>
-              <div class="bar-count" style="width:30px;">19%</div>
-            </div>
-            <div class="bar-row" style="margin:0;">
-              <div class="bar-label" style="width:60px;">Negative</div>
-              <div class="bar-track"><div class="bar-fill" style="width:9%;background:var(--red);"></div></div>
-              <div class="bar-count" style="width:30px;">9%</div>
-            </div>
-            <div style="font-size:11px;color:var(--text3);margin-top:8px;">Based on 1,250 authentic reviews</div>
-          </div>
-
-          <div>
-            <div style="font-weight:600;color:#0F136D;font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0F136D;"></span>
-              Lazada
-            </div>
-            <div class="bar-row" style="margin:0 0 6px;">
-              <div class="bar-label" style="width:60px;">Positive</div>
-              <div class="bar-track"><div class="bar-fill" style="width:61%;background:#3B6D11;"></div></div>
-              <div class="bar-count" style="width:30px;">61%</div>
-            </div>
-            <div class="bar-row" style="margin:0 0 6px;">
-              <div class="bar-label" style="width:60px;">Neutral</div>
-              <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--text3);"></div></div>
-              <div class="bar-count" style="width:30px;">25%</div>
-            </div>
-            <div class="bar-row" style="margin:0;">
-              <div class="bar-label" style="width:60px;">Negative</div>
-              <div class="bar-track"><div class="bar-fill" style="width:14%;background:var(--red);"></div></div>
-              <div class="bar-count" style="width:30px;">14%</div>
-            </div>
-            <div style="font-size:11px;color:var(--text3);margin-top:8px;">Based on 854 authentic reviews</div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Model performance comparison -->
-      <div class="card">
-        <div class="card-title">Model performance comparison</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
-
-          <div>
-            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Accuracy</div>
-            <div class="bar-row" style="margin:0 0 4px;">
-              <div class="bar-label" style="width:90px;font-size:11px;">AuthentiCheck</div>
-              <div class="bar-track"><div class="bar-fill" style="width:89%;background:var(--primary);"></div></div>
-              <div class="bar-count">89%</div>
-            </div>
-            <div class="bar-row" style="margin:0;">
-              <div class="bar-label" style="width:90px;font-size:11px;">Text-only</div>
-              <div class="bar-track"><div class="bar-fill" style="width:74%;background:var(--text3);"></div></div>
-              <div class="bar-count">74%</div>
-            </div>
-          </div>
-
-          <div>
-            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">F1-score</div>
-            <div class="bar-row" style="margin:0 0 4px;">
-              <div class="bar-label" style="width:90px;font-size:11px;">AuthentiCheck</div>
-              <div class="bar-track"><div class="bar-fill" style="width:87%;background:var(--primary);"></div></div>
-              <div class="bar-count">87%</div>
-            </div>
-            <div class="bar-row" style="margin:0;">
-              <div class="bar-label" style="width:90px;font-size:11px;">Text-only</div>
-              <div class="bar-track"><div class="bar-fill" style="width:71%;background:var(--text3);"></div></div>
-              <div class="bar-count">71%</div>
-            </div>
-          </div>
-
-          <div>
-            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Precision</div>
-            <div class="bar-row" style="margin:0 0 4px;">
-              <div class="bar-label" style="width:90px;font-size:11px;">AuthentiCheck</div>
-              <div class="bar-track"><div class="bar-fill" style="width:88%;background:var(--primary);"></div></div>
-              <div class="bar-count">88%</div>
-            </div>
-            <div class="bar-row" style="margin:0;">
-              <div class="bar-label" style="width:90px;font-size:11px;">Text-only</div>
-              <div class="bar-track"><div class="bar-fill" style="width:73%;background:var(--text3);"></div></div>
-              <div class="bar-count">73%</div>
-            </div>
-          </div>
-
-          <div>
-            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Recall</div>
-            <div class="bar-row" style="margin:0 0 4px;">
-              <div class="bar-label" style="width:90px;font-size:11px;">AuthentiCheck</div>
-              <div class="bar-track"><div class="bar-fill" style="width:86%;background:var(--primary);"></div></div>
-              <div class="bar-count">86%</div>
-            </div>
-            <div class="bar-row" style="margin:0;">
-              <div class="bar-label" style="width:90px;font-size:11px;">Text-only</div>
-              <div class="bar-track"><div class="bar-fill" style="width:70%;background:var(--text3);"></div></div>
-              <div class="bar-count">70%</div>
-            </div>
-          </div>
-
-=======
-  <!-- ===================== SETTINGS ===================== -->
-  <div id="page-settings" class="page">
-    <div class="topbar">
-      <div class="page-title">Settings</div>
-    </div>
-    <div class="cols-2">
-      <div class="card">
-        <div class="card-title">Model Configuration</div>
-        <div class="detail-row"><span class="detail-label">Text Encoder</span><span class="chip">RoBERTa</span></div>
-        <div class="detail-row"><span class="detail-label">Image Encoder</span><span class="chip">ResNet-50</span></div>
-        <div class="detail-row"><span class="detail-label">Fusion Module</span><span class="chip">Cross-Attention (CA)</span></div>
-        <div class="detail-row"><span class="detail-label">Alignment & Gating</span><span class="chip">Cross-modal Gating (CG)</span></div>
-        <div class="detail-row"><span class="detail-label">Classifier</span><span class="chip">Sentiment (3-class)</span></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Pipeline Configuration</div>
-        <div class="detail-row"><span class="detail-label">Stage 1</span><span class="chip">Multimodal Preprocessing</span></div>
-        <div class="detail-row"><span class="detail-label">Stage 2</span><span class="chip">Unimodal Feature Extraction</span></div>
-        <div class="detail-row"><span class="detail-label">Stage 3</span><span class="chip">CA Fusion & CG Alignment</span></div>
-        <div class="detail-row"><span class="detail-label">Output</span><span class="chip">Positive / Neutral / Negative + Confidence</span></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Data & Privacy</div>
-        <div class="detail-row"><span class="detail-label">Anonymize usernames</span><input type="checkbox" checked></div>
-        <div class="detail-row"><span class="detail-label">Store raw images</span><input type="checkbox"></div>
-        <div class="detail-row"><span class="detail-label">Academic use only</span><input type="checkbox" checked></div>
-        <div style="margin-top:14px;">
-          <button class="btn btn-danger btn-sm" onclick="showToast('Dataset cleared!')"><i class="ti ti-trash"></i> Clear dataset</button>
->>>>>>> Stashed changes
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">API Endpoints</div>
-        <div class="detail-row"><span class="detail-label">/api/upload/*</span><span class="chip mono">POST</span></div>
-        <div class="detail-row"><span class="detail-label">/api/status/*</span><span class="chip mono">GET</span></div>
-        <div class="detail-row"><span class="detail-label">/api/results/*</span><span class="chip mono">GET</span></div>
-        <div class="detail-row"><span class="detail-label">/api/export/*</span><span class="chip mono">GET</span></div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text3);padding:8px 10px;border-radius:var(--radius);background:var(--surface2);border:1px solid var(--border);">
-          <i class="ti ti-info-circle" style="margin-right:4px;"></i> Backend API is under development. Frontend currently uses simulated demo data.
-        </div>
-      </div>
-    </div>
-    <!-- /Sentiment page -->
-
-
-    <!-- ── Settings page ── -->
-    <div id="page-settings" class="page">
-
-      <div class="topbar">
-        <div class="page-title">Settings</div>
-      </div>
-
-      <div class="cols-2">
-
-        <div class="card">
-          <div class="card-title">Model configuration</div>
-          <div class="detail-row">
-            <span class="detail-label">Text model</span>
-            <span class="chip">DOST-RoBERTa-tl-cased</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Image-text model</span>
-            <span class="chip">M-CLIP</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Classifier</span>
-            <span class="chip">XGBoost</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Sentiment (ABSA)</span>
-            <span class="chip">RoBERTa ABSA</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Data &amp; privacy</div>
-          <div class="detail-row">
-            <span class="detail-label">Anonymize usernames</span>
-            <input type="checkbox" checked>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Store raw images</span>
-            <input type="checkbox">
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Academic use only</span>
-            <input type="checkbox" checked>
-          </div>
-          <div style="margin-top:14px;">
-            <button class="btn btn-danger btn-sm" onclick="showToast('Dataset cleared!')">
-              <i class="ti ti-trash"></i> Clear dataset
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    <!-- /Settings page -->
-
-  </main>
-</div>
-<!-- /app -->
-
-<div class="toast" id="toast"></div>
-
-<<<<<<< Updated upstream
-<script src="app.js"></script>
-=======
-<script>
-// ========== DEMO DATA ==========
-const reviews = [
-  {id:1, text:'Ergonomic sa kamay, smooth ang scroll wheel at maganda ang clicks. Worth it talaga para sa presyo.', stars:5,
-    sentiment:'positive', confidence:0.94, cg_alignment:0.91,
-    cg_gates:{text:0.72,image:0.85}, ca_weights:{t2i:0.78,i2t:0.84},
-    roberta_conf:[0.88,0.09,0.03], system_action:'Highlighted / Approved',
-    note:'High confidence positive with strong text-image CG alignment (0.91)'},
-
-  {id:2, text:'Panget ng mouse, hindi gumagana yung bluetooth agad nung pagbukas ko! Wag kayo umorder dito sayang pera.', stars:1,
-    sentiment:'negative', confidence:0.92, cg_alignment:0.87,
-    cg_gates:{text:0.88,image:0.72}, ca_weights:{t2i:0.82,i2t:0.68},
-    roberta_conf:[0.04,0.06,0.90], system_action:'Flagged for Support',
-    note:'High confidence negative — bluetooth defect complaint with visual evidence reinforcing text'},
-
-  {id:3, text:'Okay lang naman, gumagana siya. Normal mouse, walang special.', stars:3,
-    sentiment:'neutral', confidence:0.81, cg_alignment:0.65,
-    cg_gates:{text:0.78,image:0.42}, ca_weights:{t2i:0.55,i2t:0.48},
-    roberta_conf:[0.15,0.72,0.13], system_action:'Logged',
-    note:'Neutral factual description — CG gives more weight to text modality (low image signal)'},
-
-  {id:4, text:'Solid ang build quality, medyo mahal pero sulit. Battery life okay lang, sana type-C na.', stars:4,
-    sentiment:'positive', confidence:0.79, cg_alignment:0.86,
-    cg_gates:{text:0.68,image:0.81}, ca_weights:{t2i:0.74,i2t:0.79},
-    roberta_conf:[0.71,0.19,0.10], system_action:'Highlighted / Approved',
-    note:'Mixed but overall positive — CA fusion detects praise for build quality outweighing minor complaints'},
-
-  {id:5, text:'Sira ang box pagdating, may gasgas na yung mouse mismo. Nagrereklamo na ako sa seller.', stars:1,
-    sentiment:'negative', confidence:0.96, cg_alignment:0.93,
-    cg_gates:{text:0.85,image:0.92}, ca_weights:{t2i:0.91,i2t:0.88},
-    roberta_conf:[0.02,0.04,0.94], system_action:'Flagged for Support',
-    note:'Very high confidence negative — text describes damage AND image shows scratches (strong CG alignment 0.93)'},
-
-  {id:6, text:'Best mouse ever purchased! Maganda sa kamay, magaan, mabilis mag-connect. Highly recommend!', stars:5,
-    sentiment:'positive', confidence:0.91, cg_alignment:0.88,
-    cg_gates:{text:0.80,image:0.76}, ca_weights:{t2i:0.72,i2t:0.70},
-    roberta_conf:[0.92,0.05,0.03], system_action:'Highlighted / Approved',
-    note:'Strong positive text signal — RoBERTa detects enthusiastic praise, image shows product in good condition'},
-
-  {id:7, text:'Di ko pa nagagamit pero maganda packaging. Sana worth it.', stars:4,
-    sentiment:'neutral', confidence:0.68, cg_alignment:0.55,
-    cg_gates:{text:0.82,image:0.35}, ca_weights:{t2i:0.40,i2t:0.38},
-    roberta_conf:[0.28,0.58,0.14], system_action:'Logged',
-    note:'Low confidence neutral — review only discusses packaging, CG low image gate (no product use visible)'},
-
-  {id:8, text:'Maingay ang click, hindi silent tulad ng sinabi sa listing. Misleading product description.', stars:2,
-    sentiment:'negative', confidence:0.88, cg_alignment:0.78,
-    cg_gates:{text:0.90,image:0.60}, ca_weights:{t2i:0.65,i2t:0.58},
-    roberta_conf:[0.05,0.10,0.85], system_action:'Flagged for Support',
-    note:'Negative — complaint about misleading listing, CG text gate dominates (0.90 vs 0.60 image)'},
-
-  {id:9, text:'Gumagana naman pero parang walang difference sa old mouse ko. Okay na rin.', stars:3,
-    sentiment:'neutral', confidence:0.74, cg_alignment:0.62,
-    cg_gates:{text:0.75,image:0.45}, ca_weights:{t2i:0.52,i2t:0.50},
-    roberta_conf:[0.18,0.65,0.17], system_action:'Logged',
-    note:'Neutral — no strong sentiment either way, CG alignment moderate'},
-
-  {id:10, text:'Mabilis mag-pair sa laptop at phone. Love yung side buttons para sa productivity!', stars:5,
-    sentiment:'positive', confidence:0.93, cg_alignment:0.84,
-    cg_gates:{text:0.77,image:0.79}, ca_weights:{t2i:0.80,i2t:0.76},
-    roberta_conf:[0.90,0.07,0.03], system_action:'Highlighted / Approved',
-    note:'High confidence positive — specific functional praise detected by RoBERTa'},
-];
-
-// ========== STATE ==========
-let dashFilter = 'all';
-let selectedDash = null;
-let pipelineFilter = 'all';
-let selectedPipeline = null;
-let uploadedImages = [];
-
-// ========== HELPERS ==========
-function sentBadge(s) {
-  return `<span class="badge ${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</span>`;
-}
-function actionBadge(a) {
-  const cls = a.includes('Flag') ? 'flagged' : a.includes('Log') ? 'logged' : 'approved';
-  return `<span class="action-badge ${cls}">${a}</span>`;
-}
-function stars(n) { return '★'.repeat(n) + '☆'.repeat(5-n); }
-
-// ========== DASHBOARD ==========
-function renderDash() {
-  const f = dashFilter === 'all' ? reviews : reviews.filter(r => r.sentiment === dashFilter);
-  document.getElementById('dash-review-list').innerHTML = f.map(r => `
-    <div class="rev ${selectedDash===r.id?'selected':''}" onclick="selectDash(${r.id})">
-      <div class="rev-meta">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="color:#d4a017;font-size:12px;letter-spacing:-1px;">${stars(r.stars)}</span>
-          <span class="mono" style="font-size:10px;color:var(--text3);">${(r.confidence*100).toFixed(0)}% conf</span>
-        </div>
-        ${sentBadge(r.sentiment)}
-      </div>
-      <div class="rev-text">${r.text}</div>
-      <div class="rev-scores">
-        <span class="rev-score">CG: ${r.cg_alignment.toFixed(2)}</span>
-        <span class="rev-score">T→I: ${r.ca_weights.t2i.toFixed(2)}</span>
-        <span class="rev-score">I→T: ${r.ca_weights.i2t.toFixed(2)}</span>
-      </div>
-    </div>`).join('');
-}
-
-function selectDash(id) {
-  selectedDash = id; renderDash();
-  const r = reviews.find(x => x.id === id);
-  document.getElementById('dash-detail').innerHTML = `
-    <div class="card-title">Review #${r.id}</div>
-    <div class="detail-row"><span class="detail-label">Sentiment</span>${sentBadge(r.sentiment)}</div>
-    <div class="detail-row"><span class="detail-label">Confidence</span><span class="chip mono">${(r.confidence*100).toFixed(1)}%</span></div>
-    <div class="detail-row"><span class="detail-label">CG Alignment</span><span class="chip mono">${r.cg_alignment.toFixed(2)}</span></div>
-    <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(r.system_action)}</div>
-    <div class="detail-row"><span class="detail-label">Stars</span><span style="color:#d4a017;">${stars(r.stars)}</span></div>
-    <div style="margin-top:10px;font-size:11px;padding:8px 10px;border-radius:var(--radius);background:var(--surface2);color:var(--text2);border:1px solid var(--border);">${r.note}</div>`;
-}
-
-function setDashFilter(f, el) {
-  dashFilter = f; selectedDash = null;
-  document.querySelectorAll('#dash-ftabs .ftab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('dash-detail').innerHTML = '<div class="card-title">Review Detail</div><div style="font-size:12px;color:var(--text3);">Click a review to see its full pipeline analysis.</div>';
-  renderDash();
-}
-
-function filterDash(f, el) {
-  document.querySelectorAll('#dash-metrics .metric').forEach(m => m.classList.remove('selected'));
-  el.classList.add('selected');
-  dashFilter = f; selectedDash = null;
-  const map = {all:0, positive:1, neutral:2, negative:3};
-  document.querySelectorAll('#dash-ftabs .ftab').forEach((t,i) => t.classList.toggle('active', i===map[f]||(f==='all'&&i===0)));
-  document.getElementById('dash-detail').innerHTML = '<div class="card-title">Review Detail</div><div style="font-size:12px;color:var(--text3);">Click a review to see its full pipeline analysis.</div>';
-  renderDash();
-}
-
-// ========== PIPELINE ==========
-function renderPipeline() {
-  const f = pipelineFilter === 'all' ? reviews : reviews.filter(r => r.sentiment === pipelineFilter);
-  document.getElementById('pipeline-list').innerHTML = f.map(r => `
-    <div class="rev ${selectedPipeline===r.id?'selected':''}" onclick="selectPipeline(${r.id})">
-      <div class="rev-meta">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="color:#d4a017;font-size:12px;letter-spacing:-1px;">${stars(r.stars)}</span>
-          <span class="mono" style="font-size:10px;color:var(--text3);">CG: ${r.cg_alignment.toFixed(2)}</span>
-          <span class="mono" style="font-size:10px;color:var(--text3);">${(r.confidence*100).toFixed(0)}%</span>
-        </div>
-        ${sentBadge(r.sentiment)}
-      </div>
-      <div class="rev-text">${r.text}</div>
-    </div>`).join('');
-}
-
-function selectPipeline(id) {
-  selectedPipeline = id; renderPipeline();
-  const r = reviews.find(x => x.id === id);
-  const sentColor = {positive:'var(--emerald)',neutral:'var(--amber)',negative:'var(--rose)'}[r.sentiment];
-  document.getElementById('pipeline-detail').innerHTML = `
-    <div class="card-title">Review #${r.id} — Full Pipeline Analysis</div>
-
-    <div class="pipe-section">
-      <div class="pipe-section-title"><i class="ti ti-typography"></i> Stage 2a: RoBERTa Text Features</div>
-      <div class="gate-bar"><div class="gate-label">Positive</div><div class="gate-track"><div class="gate-fill" style="width:${r.roberta_conf[0]*100}%;background:var(--emerald)"></div></div><div class="gate-val">${r.roberta_conf[0].toFixed(2)}</div></div>
-      <div class="gate-bar"><div class="gate-label">Neutral</div><div class="gate-track"><div class="gate-fill" style="width:${r.roberta_conf[1]*100}%;background:var(--amber)"></div></div><div class="gate-val">${r.roberta_conf[1].toFixed(2)}</div></div>
-      <div class="gate-bar"><div class="gate-label">Negative</div><div class="gate-track"><div class="gate-fill" style="width:${r.roberta_conf[2]*100}%;background:var(--rose)"></div></div><div class="gate-val">${r.roberta_conf[2].toFixed(2)}</div></div>
-    </div>
-
-    <div class="pipe-section">
-      <div class="pipe-section-title"><i class="ti ti-photo-scan"></i> Stage 2b: ResNet-50 Image Features</div>
-      <div style="font-size:12px;color:var(--text2);">Visual spatial features extracted from review image.</div>
-      <div style="display:flex;gap:6px;margin-top:6px;">
-        <span class="chip mono">512-dim embedding</span>
-        <span class="chip mono">extracted ✓</span>
-      </div>
-    </div>
-
-    <div class="pipe-section">
-      <div class="pipe-section-title"><i class="ti ti-git-merge"></i> Stage 3: CG Alignment & Gate Values</div>
-      <div class="detail-row" style="border-bottom:1px solid var(--border);"><span class="detail-label">CG Alignment Score</span><span class="chip mono" style="background:${r.cg_alignment>0.7?'var(--emerald-light)':'var(--amber-light)'}; color:${r.cg_alignment>0.7?'var(--emerald)':'var(--amber)'}">${r.cg_alignment.toFixed(2)} — ${r.cg_alignment>0.7?'strong agreement':'moderate'}</span></div>
-      <div style="margin-top:10px;">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;">MODALITY GATE VALUES</div>
-        <div class="gate-bar"><div class="gate-label">Text Gate</div><div class="gate-track"><div class="gate-fill" style="width:${r.cg_gates.text*100}%;background:var(--blue)"></div></div><div class="gate-val">${r.cg_gates.text.toFixed(2)}</div></div>
-        <div class="gate-bar"><div class="gate-label">Image Gate</div><div class="gate-track"><div class="gate-fill" style="width:${r.cg_gates.image*100}%;background:var(--cyan)"></div></div><div class="gate-val">${r.cg_gates.image.toFixed(2)}</div></div>
-      </div>
-    </div>
-
-    <div class="pipe-section">
-      <div class="pipe-section-title"><i class="ti ti-arrows-cross"></i> Cross-Attention Weights</div>
-      <div class="gate-bar"><div class="gate-label">Text→Image</div><div class="gate-track"><div class="gate-fill" style="width:${r.ca_weights.t2i*100}%;background:var(--purple)"></div></div><div class="gate-val">${r.ca_weights.t2i.toFixed(2)}</div></div>
-      <div class="gate-bar"><div class="gate-label">Image→Text</div><div class="gate-track"><div class="gate-fill" style="width:${r.ca_weights.i2t*100}%;background:var(--purple)"></div></div><div class="gate-val">${r.ca_weights.i2t.toFixed(2)}</div></div>
-    </div>
-
-    <div style="padding:14px;border-radius:var(--radius);background:var(--surface2);border:1px solid var(--border);margin-top:4px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span style="font-weight:700;font-size:13px;">Final Prediction</span>
-        ${sentBadge(r.sentiment)}
-      </div>
-      <div class="detail-row"><span class="detail-label">Confidence</span><span class="chip mono" style="font-weight:600;">${(r.confidence*100).toFixed(1)}%</span></div>
-      <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(r.system_action)}</div>
-      <div style="margin-top:8px;font-size:11px;padding:8px;border-radius:6px;background:var(--bg2);color:var(--text2);border:1px solid var(--border);">${r.note}</div>
-    </div>`;
-}
-
-function setPipelineFilter(f, el) {
-  pipelineFilter = f; selectedPipeline = null;
-  document.querySelectorAll('#pipeline-tabs .ftab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('pipeline-detail').innerHTML = '<div class="card-title">Pipeline Analysis</div><div style="font-size:12px;color:var(--text3);">Select a review to inspect its full pipeline scores.</div>';
-  renderPipeline();
-}
-
-// ========== IMAGE HANDLING ==========
-function handleImages(input) {
-  Array.from(input.files).forEach(f => {
-    const reader = new FileReader();
-    reader.onload = e => { uploadedImages.push({name:f.name,url:e.target.result}); renderImgGrid(); };
-    reader.readAsDataURL(f);
-  });
-  input.value = '';
-}
-
-function renderImgGrid() {
-  const grid = document.getElementById('img-preview-grid');
-  grid.innerHTML = uploadedImages.map((img,i) => `
-    <div class="img-thumb-wrap">
-      <img class="img-thumb" src="${img.url}" alt="${img.name}">
-      <button class="img-remove" onclick="removeImg(${i})" title="Remove">&times;</button>
-    </div>`).join('') +
-    `<div class="img-placeholder" onclick="document.getElementById('img-input').click()">
-      <i class="ti ti-plus"></i><span>Add more</span>
-    </div>`;
-  document.getElementById('img-count').textContent = uploadedImages.length
-    ? `${uploadedImages.length} image${uploadedImages.length>1?'s':''} uploaded — will be processed by ResNet-50`
-    : '';
-}
-
-function removeImg(i) {
-  uploadedImages.splice(i,1);
-  if (!uploadedImages.length) {
-    document.getElementById('img-preview-grid').innerHTML = '';
-    document.getElementById('img-count').textContent = '';
-  } else renderImgGrid();
-}
-
-function handleSingleImg(input) {
-  const f = input.files[0]; if(!f) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('single-img-preview').innerHTML = `
-      <div class="img-thumb-wrap" style="width:80px;height:80px;">
-        <img class="img-thumb" src="${e.target.result}" alt="review" style="width:80px;height:80px;">
-        <button class="img-remove" onclick="clearSingleImg()">&times;</button>
-      </div>`;
-  };
-  reader.readAsDataURL(f);
-}
-
-function clearSingleImg() {
-  document.getElementById('single-img-preview').innerHTML = `
-    <div class="img-placeholder" onclick="document.getElementById('single-img-input').click()">
-      <i class="ti ti-photo-plus"></i><span>Add</span>
-    </div>`;
-  document.getElementById('single-img-input').value = '';
-}
-
-// ========== CLASSIFY TEST ==========
-function classifyTest() {
-  const text = document.getElementById('test-text').value.trim();
-  if (!text) { showToast('Enter review text first'); return; }
-  const el = document.getElementById('test-result');
-  el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--blue);"><i class="ti ti-loader-2" style="font-size:24px;animation:spin 1s linear infinite;display:inline-block;"></i><div style="font-size:12px;margin-top:6px;">Running through pipeline…</div></div>';
-
-  setTimeout(() => {
-    const stars_n = parseInt(document.getElementById('test-stars').value);
-    const hasImg = !!document.querySelector('#single-img-preview .img-thumb');
-
-    // Simulated pipeline
-    const posWords = /(maganda|solid|worth|sulit|love|smooth|ganda|recommend|best|satisfied|great|good|nice)/i;
-    const negWords = /(panget|sira|hindi|wag|sayang|broken|defect|gasgas|maingay|misleading|laggy|disconnect)/i;
-    const hasPos = posWords.test(text);
-    const hasNeg = negWords.test(text);
-
-    let sentiment = 'neutral';
-    let roberta = [0.20, 0.60, 0.20];
-    if (hasPos && !hasNeg) { sentiment = 'positive'; roberta = [0.80+Math.random()*0.12, 0.10, 0.03]; }
-    else if (hasNeg && !hasPos) { sentiment = 'negative'; roberta = [0.03, 0.07, 0.82+Math.random()*0.10]; }
-    else if (hasPos && hasNeg) { sentiment = 'positive'; roberta = [0.55+Math.random()*0.15, 0.25, 0.12]; }
-
-    const cg_align = hasImg ? 0.60+Math.random()*0.35 : 0.40+Math.random()*0.25;
-    const text_gate = 0.65+Math.random()*0.25;
-    const img_gate = hasImg ? 0.50+Math.random()*0.40 : 0.15+Math.random()*0.20;
-    const confidence = 0.65+Math.random()*0.30;
-
-    const sentColor = {positive:'var(--emerald)',neutral:'var(--amber)',negative:'var(--rose)'}[sentiment];
-    const sysAction = {positive:'Highlighted / Approved',neutral:'Logged',negative:'Flagged for Support'}[sentiment];
-
-    el.innerHTML = `
-      <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--surface2);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <span style="font-weight:700;font-size:14px;">Pipeline Result</span>
-          ${sentBadge(sentiment)}
-        </div>
-
-        <div class="pipe-section">
-          <div class="pipe-section-title"><i class="ti ti-typography"></i> RoBERTa Features</div>
-          <div class="gate-bar"><div class="gate-label">Positive</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[0]*100}%;background:var(--emerald)"></div></div><div class="gate-val">${roberta[0].toFixed(2)}</div></div>
-          <div class="gate-bar"><div class="gate-label">Neutral</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[1]*100}%;background:var(--amber)"></div></div><div class="gate-val">${roberta[1].toFixed(2)}</div></div>
-          <div class="gate-bar"><div class="gate-label">Negative</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[2]*100}%;background:var(--rose)"></div></div><div class="gate-val">${roberta[2].toFixed(2)}</div></div>
-        </div>
-
-        <div class="detail-row"><span class="detail-label">CG Alignment</span><span class="chip mono">${cg_align.toFixed(2)} — ${cg_align>0.7?'strong':'moderate'}</span></div>
-        <div class="detail-row"><span class="detail-label">CG Text Gate</span><span class="chip mono">${text_gate.toFixed(2)}</span></div>
-        <div class="detail-row"><span class="detail-label">CG Image Gate</span><span class="chip mono">${img_gate.toFixed(2)}</span></div>
-        <div class="detail-row"><span class="detail-label">Confidence</span><span class="chip mono">${(confidence*100).toFixed(1)}%</span></div>
-        <div class="detail-row"><span class="detail-label">Image uploaded</span><span class="chip">${hasImg?'Yes — ResNet-50 processed':'No'}</span></div>
-        <div class="detail-row"><span class="detail-label">Stars</span><span style="color:#d4a017;">${'★'.repeat(stars_n)+'☆'.repeat(5-stars_n)}</span></div>
-        <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(sysAction)}</div>
-
-        <div style="margin-top:10px;font-size:12px;padding:10px;border-radius:var(--radius);background:var(--bg2);color:var(--text2);border:1px solid var(--border);">${{
-          positive:'Cross-Attention weighted text praise signals with image features. CG confirmed modality agreement and elevated positive class probability.',
-          neutral:'No strong sentiment signal detected. CG found moderate modality alignment. Review logged for standard processing.',
-          negative:'Negative text features dominate via CG text gate. Cross-Attention identified complaint patterns. Review flagged for customer support.'
-        }[sentiment]}</div>
-      </div>`;
-  }, 1200);
-}
-
-// ========== CSV HANDLING ==========
-function handleCSV(input) {
-  const f = input.files[0];
-  if (!f) return;
-  document.getElementById('csv-status').innerHTML = `
-    <div style="display:flex;align-items:center;gap:8px;padding:10px;border-radius:var(--radius);background:var(--emerald-light);border:1px solid rgba(16,185,129,0.2);">
-      <i class="ti ti-check" style="color:var(--emerald);font-size:16px;"></i>
-      <span style="color:var(--emerald);font-weight:600;">${f.name}</span>
-      <span style="color:var(--text2);">(${(f.size/1024).toFixed(1)} KB)</span>
-    </div>`;
-}
-
-function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('dragover'); }
-function dragLeave(e) { e.currentTarget.classList.remove('dragover'); }
-function dropCSV(e) { e.preventDefault(); e.currentTarget.classList.remove('dragover'); showToast('CSV file received!'); }
-function dropImages(e) { e.preventDefault(); e.currentTarget.classList.remove('dragover'); showToast('Images received!'); }
-
-function fakeLoad() {
-  showToast('Sample dataset loaded — 2,104 reviews');
-  goPage('dashboard');
-}
-
-// ========== NAVIGATION ==========
-function goPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.snav').forEach(n => n.classList.remove('active'));
-  document.getElementById('nav-'+id).classList.add('active');
-  if (id === 'pipeline') renderPipeline();
-}
-
-// ========== TOAST ==========
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// ========== SPIN ANIMATION ==========
-const spinStyle = document.createElement('style');
-spinStyle.textContent = '@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}';
-document.head.appendChild(spinStyle);
-
-// ========== INIT ==========
-renderDash();
-if (window.location.hash === '#upload') goPage('upload');
-</script>
->>>>>>> Stashed changes
+  <script src="app.js"></script>
 </body>
+
 </html>

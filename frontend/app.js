@@ -1,235 +1,226 @@
 /* ============================================================
-   AuthentiCheck — Dashboard Logic
+   CLIP-CA-CG — Dashboard Logic
+   Multimodal Sentiment Analysis with RoBERTa + ResNet-50
    ============================================================ */
 
-/* ── Sample Data ── */
+/* ── Demo Data ── */
 
 const reviews = [
   {
     id: 1,
     text: 'Ergonomic sa kamay, smooth ang scroll wheel at maganda ang clicks. Worth it talaga para sa presyo.',
-    stars: 5, platform: 'Shopee', label: 'auth', clip: 0.91,
-    probs: [0.85, 0.05, 0.05, 0.05], sentiment: 'Positive',
-    note: 'High p_auth, consistent image, matching 5★ rating'
+    stars: 5,
+    sentiment: 'positive',
+    confidence: 0.94,
+    cg_alignment: 0.91,
+    cg_gates: { text: 0.72, image: 0.85 },
+    ca_weights: { t2i: 0.78, i2t: 0.84 },
+    roberta_conf: [0.88, 0.09, 0.03],
+    system_action: 'Highlighted / Approved',
+    note: 'High confidence positive with strong text-image CG alignment (0.91)'
   },
   {
     id: 2,
     text: 'Panget ng mouse, hindi gumagana yung bluetooth agad nung pagbukas ko! Wag kayo umorder dito sayang pera.',
-    stars: 5, platform: 'Lazada', label: 'dec', clip: 0.88,
-    probs: [0.82, 0.08, 0.05, 0.05], sentiment: '—',
-    note: 'XGBoost detected extreme rating mismatch (5★ rating vs highly negative text)'
+    stars: 1,
+    sentiment: 'negative',
+    confidence: 0.92,
+    cg_alignment: 0.87,
+    cg_gates: { text: 0.88, image: 0.72 },
+    ca_weights: { t2i: 0.82, i2t: 0.68 },
+    roberta_conf: [0.04, 0.06, 0.90],
+    system_action: 'Flagged for Support',
+    note: 'High confidence negative — bluetooth defect complaint with visual evidence reinforcing text'
   },
   {
     id: 3,
-    text: 'Ang ganda ng pagkain doon sa restaurant malapit sa mall.',
-    stars: 5, platform: 'Shopee', label: 'irr', clip: 0.09,
-    probs: [0.05, 0.02, 0.92, 0.01], sentiment: '—',
-    note: 'High p_irr & low S_clip (0.09) — off-topic food review for a mouse'
+    text: 'Okay lang naman, gumagana siya. Normal mouse, walang special.',
+    stars: 3,
+    sentiment: 'neutral',
+    confidence: 0.81,
+    cg_alignment: 0.65,
+    cg_gates: { text: 0.78, image: 0.42 },
+    ca_weights: { t2i: 0.55, i2t: 0.48 },
+    roberta_conf: [0.15, 0.72, 0.13],
+    system_action: 'Logged',
+    note: 'Neutral factual description — CG gives more weight to text modality (low image signal)'
   },
   {
     id: 4,
-    text: 'Okay. Good.',
-    stars: 4, platform: 'Lazada', label: 'liv', clip: 0.77,
-    probs: [0.05, 0.04, 0.10, 0.81], sentiment: '—',
-    note: 'High p_LIV probability — vague text, lacks informational value'
+    text: 'Solid ang build quality, medyo mahal pero sulit. Battery life okay lang, sana type-C na.',
+    stars: 4,
+    sentiment: 'positive',
+    confidence: 0.79,
+    cg_alignment: 0.86,
+    cg_gates: { text: 0.68, image: 0.81 },
+    ca_weights: { t2i: 0.74, i2t: 0.79 },
+    roberta_conf: [0.71, 0.19, 0.10],
+    system_action: 'Highlighted / Approved',
+    note: 'Mixed but overall positive — CA fusion detects praise for build quality outweighing minor complaints'
   },
   {
     id: 5,
-    text: 'Solid ang build quality, medyo mahal pero sulit. Battery life okay lang, sana type-C na.',
-    stars: 4, platform: 'Shopee', label: 'auth', clip: 0.86,
-    probs: [0.74, 0.11, 0.05, 0.10], sentiment: 'Mixed',
-    note: 'Valid mixed sentiment review with consistent rating and image'
+    text: 'Sira ang box pagdating, may gasgas na yung mouse mismo. Nagrereklamo na ako sa seller.',
+    stars: 1,
+    sentiment: 'negative',
+    confidence: 0.96,
+    cg_alignment: 0.93,
+    cg_gates: { text: 0.85, image: 0.92 },
+    ca_weights: { t2i: 0.91, i2t: 0.88 },
+    roberta_conf: [0.02, 0.04, 0.94],
+    system_action: 'Flagged for Support',
+    note: 'Very high confidence negative — text describes damage AND image shows scratches (strong CG alignment 0.93)'
   },
   {
     id: 6,
-    text: 'Best mouse ever!!! 10/10 would recommend to everyone!!! I love this so much buy it now!!!!!',
-    stars: 5, platform: 'Lazada', label: 'dec', clip: 0.12,
-    probs: [0.20, 0.75, 0.03, 0.02], sentiment: '—',
-    note: 'High p_dec (artificially positive text) paired with unaligned image (S_clip 0.12)'
+    text: 'Best mouse ever purchased! Maganda sa kamay, magaan, mabilis mag-connect. Highly recommend!',
+    stars: 5,
+    sentiment: 'positive',
+    confidence: 0.91,
+    cg_alignment: 0.88,
+    cg_gates: { text: 0.80, image: 0.76 },
+    ca_weights: { t2i: 0.72, i2t: 0.70 },
+    roberta_conf: [0.92, 0.05, 0.03],
+    system_action: 'Highlighted / Approved',
+    note: 'Strong positive text signal — RoBERTa detects enthusiastic praise, image shows product in good condition'
   },
   {
     id: 7,
-    text: 'Di ko pa nagagamit pero maganda packaging.',
-    stars: 5, platform: 'Shopee', label: 'liv', clip: 0.79,
-    probs: [0.15, 0.05, 0.12, 0.68], sentiment: '—',
-    note: 'High p_LIV — review only discusses packaging, no product experience'
+    text: 'Di ko pa nagagamit pero maganda packaging. Sana worth it.',
+    stars: 4,
+    sentiment: 'neutral',
+    confidence: 0.68,
+    cg_alignment: 0.55,
+    cg_gates: { text: 0.82, image: 0.35 },
+    ca_weights: { t2i: 0.40, i2t: 0.38 },
+    roberta_conf: [0.28, 0.58, 0.14],
+    system_action: 'Logged',
+    note: 'Low confidence neutral — review only discusses packaging, CG low image gate (no product use visible)'
   },
   {
     id: 8,
-    text: 'Sira ang box pagdating. Nagrereklamo na ko sa courier. Ref no. 28812.',
-    stars: 1, platform: 'Lazada', label: 'irr', clip: 0.13,
-    probs: [0.10, 0.03, 0.77, 0.10], sentiment: '—',
-    note: 'High p_irr — logistics/courier complaint, not a product review'
+    text: 'Maingay ang click, hindi silent tulad ng sinabi sa listing. Misleading product description.',
+    stars: 2,
+    sentiment: 'negative',
+    confidence: 0.88,
+    cg_alignment: 0.78,
+    cg_gates: { text: 0.90, image: 0.60 },
+    ca_weights: { t2i: 0.65, i2t: 0.58 },
+    roberta_conf: [0.05, 0.10, 0.85],
+    system_action: 'Flagged for Support',
+    note: 'Negative — complaint about misleading listing, CG text gate dominates (0.90 vs 0.60 image)'
+  },
+  {
+    id: 9,
+    text: 'Gumagana naman pero parang walang difference sa old mouse ko. Okay na rin.',
+    stars: 3,
+    sentiment: 'neutral',
+    confidence: 0.74,
+    cg_alignment: 0.62,
+    cg_gates: { text: 0.75, image: 0.45 },
+    ca_weights: { t2i: 0.52, i2t: 0.50 },
+    roberta_conf: [0.18, 0.65, 0.17],
+    system_action: 'Logged',
+    note: 'Neutral — no strong sentiment either way, CG alignment moderate'
+  },
+  {
+    id: 10,
+    text: 'Mabilis mag-pair sa laptop at phone. Love yung side buttons para sa productivity!',
+    stars: 5,
+    sentiment: 'positive',
+    confidence: 0.93,
+    cg_alignment: 0.84,
+    cg_gates: { text: 0.77, image: 0.79 },
+    ca_weights: { t2i: 0.80, i2t: 0.76 },
+    roberta_conf: [0.90, 0.07, 0.03],
+    system_action: 'Highlighted / Approved',
+    note: 'High confidence positive — specific functional praise detected by RoBERTa'
   },
 ];
 
-const absa = [
-  {
-    aspect: 'Ergonomics', pos: 312, neu: 48, neg: 21,
-    samples: [
-      'Grabe ang ganda sa kamay, hindi nakakangawit kahit matagal gamitin.',
-      'Medyo malaki para sa maliit na kamay.',
-      'Sumasakit wrist ko after an hour, not recommended.'
-    ]
-  },
-  {
-    aspect: 'Connectivity / Bluetooth', pos: 198, neu: 61, neg: 55,
-    samples: [
-      'Mabilis mag-connect at stable ang connection!',
-      'Minsan nade-disconnect pero okay lang.',
-      'Laggy ang bluetooth, hindi magamit pang-games.'
-    ]
-  },
-  {
-    aspect: 'Battery life', pos: 410, neu: 90, neg: 38,
-    samples: [
-      'Isang charge lang umaabot ng ilang weeks!',
-      'Okay lang battery life, standard lang.',
-      'Mabilis maubos battery, kailangan lagi i-charge.'
-    ]
-  },
-  {
-    aspect: 'Price / value', pos: 502, neu: 72, neg: 14,
-    samples: [
-      'Worth it talaga sa presyo, premium feel no regrets!',
-      'Medyo mahal pero okay na rin.',
-      'Mas mahal kaysa sa expected, hindi sulit.'
-    ]
-  },
-  {
-    aspect: 'Build quality', pos: 244, neu: 55, neg: 43,
-    samples: [
-      'Solid ang build, hindi parang mumurahing plastic.',
-      'Plastic pero okay naman ang weight.',
-      'Ang nipis ng plastic material, parang madaling mabasag.'
-    ]
-  },
-  {
-    aspect: 'Scroll wheel', pos: 287, neu: 44, neg: 29,
-    samples: [
-      'Ang smooth ng infinite scroll! Super satisfying.',
-      'Okay naman ang scroll wheel.',
-      'Medyo maingay at magaspang yung scroll wheel.'
-    ]
-  },
-  {
-    aspect: 'Click feel / Buttons', pos: 198, neu: 82, neg: 12,
-    samples: [
-      'Silent clicks and very responsive side buttons!',
-      'Normal clicks, hindi silent.',
-      'Matigas i-click yung left button, nakakangawit.'
-    ]
-  },
-  {
-    aspect: 'Shipping / delivery', pos: 155, neu: 60, neg: 24,
-    samples: [
-      'Mabilis dumating, 2 days lang nandito na!',
-      'Standard shipping time.',
-      'Matagal dumating, umabot ng 2 weeks.'
-    ]
-  },
-];
 
 /* ── State ── */
-let dashFilter       = 'all';
-let selectedDash     = null;
-let classifyFilter   = 'all';
-let selectedClassify = null;
-let uploadedImages   = [];
+
+let dashFilter = 'all';
+let selectedDash = null;
+let pipelineFilter = 'all';
+let selectedPipeline = null;
+let uploadedImages = [];
+
 
 /* ── Helpers ── */
 
-function lbl(l) {
-  return { auth: 'auth', liv: 'liv', irr: 'irr', dec: 'dec' }[l] || 'auth';
+function sentBadge(s) {
+  return `<span class="badge ${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span>`;
 }
 
-function lblTxt(l) {
-  return { auth: 'Authentic', liv: 'Vague / LIV', irr: 'Irrelevant', dec: 'Deceptive' }[l] || l;
+function actionBadge(a) {
+  const cls = a.includes('Flag') ? 'flagged' : a.includes('Log') ? 'logged' : 'approved';
+  return `<span class="action-badge ${cls}">${a}</span>`;
 }
 
 function stars(n) {
   return '★'.repeat(n) + '☆'.repeat(5 - n);
 }
 
+
 /* ── Toast ── */
+
 function showToast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2200);
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+
 /* ── Page Navigation ── */
+
 function goPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-
-  document.querySelectorAll('.sidebar-nav').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.snav').forEach(n => n.classList.remove('active'));
   document.getElementById('nav-' + id).classList.add('active');
-
-  if (id === 'classify') renderClassify();
-  if (id === 'sentiment') renderABSA();
+  if (id === 'pipeline') renderPipeline();
 }
 
-/* ── Dashboard ── */
+
+/* ============================================================
+   Dashboard
+   ============================================================ */
 
 function renderDash() {
-  const filtered = dashFilter === 'all'
-    ? reviews
-    : reviews.filter(r => r.label === dashFilter);
-
-  document.getElementById('dash-review-list').innerHTML = filtered.map(r => `
+  const f = dashFilter === 'all' ? reviews : reviews.filter(r => r.sentiment === dashFilter);
+  document.getElementById('dash-review-list').innerHTML = f.map(r => `
     <div class="rev ${selectedDash === r.id ? 'selected' : ''}" onclick="selectDash(${r.id})">
       <div class="rev-meta">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span class="stars" style="font-size:12px;">${stars(r.stars)}</span>
-          <span style="font-size:11px;color:var(--text3);">${r.platform}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:#d4a017;font-size:12px;letter-spacing:-1px;">${stars(r.stars)}</span>
+          <span class="mono" style="font-size:10px;color:var(--text3);">${(r.confidence * 100).toFixed(0)}% conf</span>
         </div>
-        <span class="badge ${lbl(r.label)}">${lblTxt(r.label)}</span>
+        ${sentBadge(r.sentiment)}
       </div>
       <div class="rev-text">${r.text}</div>
-      ${r.note ? `<div class="rev-note">${r.note}</div>` : ''}
-    </div>
-  `).join('');
+      <div class="rev-scores">
+        <span class="rev-score">CG: ${r.cg_alignment.toFixed(2)}</span>
+        <span class="rev-score">T→I: ${r.ca_weights.t2i.toFixed(2)}</span>
+        <span class="rev-score">I→T: ${r.ca_weights.i2t.toFixed(2)}</span>
+      </div>
+    </div>`).join('');
 }
 
 function selectDash(id) {
   selectedDash = id;
   renderDash();
-
   const r = reviews.find(x => x.id === id);
   document.getElementById('dash-detail').innerHTML = `
     <div class="card-title">Review #${r.id}</div>
-    <div class="detail-row">
-      <span class="detail-label">Classification</span>
-      <span class="badge ${lbl(r.label)}">${lblTxt(r.label)}</span>
-    </div>
-    <div class="detail-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
-      <span class="detail-label">DOST-RoBERTa Probabilities</span>
-      <div style="display:flex;gap:4px;flex-wrap:wrap;">
-        <span class="chip">p_auth: ${r.probs[0]}</span>
-        <span class="chip">p_dec: ${r.probs[1]}</span>
-        <span class="chip">p_irr: ${r.probs[2]}</span>
-        <span class="chip">p_liv: ${r.probs[3]}</span>
-      </div>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">M-CLIP score</span>
-      <span class="chip">${r.clip} — ${r.clip > 0.5 ? 'consistent' : 'mismatch'}</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Star rating</span>
-      <span class="stars" style="font-size:13px;">${stars(r.stars)}</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Platform</span>
-      <span class="chip">${r.platform}</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Sentiment</span>
-      <span class="chip">${r.sentiment}</span>
-    </div>
-  `;
+    <div class="detail-row"><span class="detail-label">Sentiment</span>${sentBadge(r.sentiment)}</div>
+    <div class="detail-row"><span class="detail-label">Confidence</span><span class="chip mono">${(r.confidence * 100).toFixed(1)}%</span></div>
+    <div class="detail-row"><span class="detail-label">CG Alignment</span><span class="chip mono">${r.cg_alignment.toFixed(2)}</span></div>
+    <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(r.system_action)}</div>
+    <div class="detail-row"><span class="detail-label">Stars</span><span style="color:#d4a017;">${stars(r.stars)}</span></div>
+    <div style="margin-top:10px;font-size:11px;padding:8px 10px;border-radius:var(--radius);background:var(--surface2);color:var(--text2);border:1px solid var(--border);">${r.note}</div>`;
 }
 
 function setDashFilter(f, el) {
@@ -238,8 +229,7 @@ function setDashFilter(f, el) {
   document.querySelectorAll('#dash-ftabs .ftab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('dash-detail').innerHTML =
-    '<div class="card-title">Review detail</div>' +
-    '<div style="font-size:12px;color:var(--text3);">Click a review to see its analysis.</div>';
+    '<div class="card-title">Review Detail</div><div style="font-size:12px;color:var(--text3);">Click a review to see its full pipeline analysis.</div>';
   renderDash();
 }
 
@@ -248,142 +238,103 @@ function filterDash(f, el) {
   el.classList.add('selected');
   dashFilter = f;
   selectedDash = null;
-
-  const tabMap = { all: 0, auth: 1, dec: 2, liv: 3, irr: 4 };
+  const map = { all: 0, positive: 1, neutral: 2, negative: 3 };
   document.querySelectorAll('#dash-ftabs .ftab').forEach((t, i) =>
-    t.classList.toggle('active', i === tabMap[f] || (f === 'all' && i === 0))
+    t.classList.toggle('active', i === map[f] || (f === 'all' && i === 0))
   );
-
   document.getElementById('dash-detail').innerHTML =
-    '<div class="card-title">Review detail</div>' +
-    '<div style="font-size:12px;color:var(--text3);">Click a review to see its analysis.</div>';
+    '<div class="card-title">Review Detail</div><div style="font-size:12px;color:var(--text3);">Click a review to see its full pipeline analysis.</div>';
   renderDash();
 }
 
-/* ── Classification ── */
 
-function renderClassify() {
-  const filtered = classifyFilter === 'all'
-    ? reviews
-    : reviews.filter(r => r.label === classifyFilter);
+/* ============================================================
+   Pipeline
+   ============================================================ */
 
-  document.getElementById('classify-list').innerHTML = filtered.map(r => `
-    <div class="rev ${selectedClassify === r.id ? 'selected' : ''}" onclick="selectClassify(${r.id})">
+function renderPipeline() {
+  const f = pipelineFilter === 'all' ? reviews : reviews.filter(r => r.sentiment === pipelineFilter);
+  document.getElementById('pipeline-list').innerHTML = f.map(r => `
+    <div class="rev ${selectedPipeline === r.id ? 'selected' : ''}" onclick="selectPipeline(${r.id})">
       <div class="rev-meta">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span class="stars" style="font-size:12px;">${stars(r.stars)}</span>
-          <span style="font-size:11px;color:var(--text3);">${r.platform}</span>
-          <span style="font-size:11px;color:var(--text3);">CLIP: ${r.clip}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:#d4a017;font-size:12px;letter-spacing:-1px;">${stars(r.stars)}</span>
+          <span class="mono" style="font-size:10px;color:var(--text3);">CG: ${r.cg_alignment.toFixed(2)}</span>
+          <span class="mono" style="font-size:10px;color:var(--text3);">${(r.confidence * 100).toFixed(0)}%</span>
         </div>
-        <span class="badge ${lbl(r.label)}">${lblTxt(r.label)}</span>
+        ${sentBadge(r.sentiment)}
       </div>
       <div class="rev-text">${r.text}</div>
-      ${r.note ? `<div class="rev-note">${r.note}</div>` : ''}
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-function selectClassify(id) {
-  selectedClassify = id;
-  renderClassify();
-
+function selectPipeline(id) {
+  selectedPipeline = id;
+  renderPipeline();
   const r = reviews.find(x => x.id === id);
-  document.getElementById('classify-detail').innerHTML = `
-    <div class="card-title">Review #${r.id} — full analysis</div>
-    <div class="detail-row">
-      <span class="detail-label">Final classification</span>
-      <span class="badge ${lbl(r.label)}">${lblTxt(r.label)}</span>
+  document.getElementById('pipeline-detail').innerHTML = `
+    <div class="card-title">Review #${r.id} — Full Pipeline Analysis</div>
+
+    <div class="pipe-section">
+      <div class="pipe-section-title"><i class="ti ti-typography"></i> Stage 2a: RoBERTa Text Features</div>
+      <div class="gate-bar"><div class="gate-label">Positive</div><div class="gate-track"><div class="gate-fill" style="width:${r.roberta_conf[0] * 100}%;background:var(--emerald)"></div></div><div class="gate-val">${r.roberta_conf[0].toFixed(2)}</div></div>
+      <div class="gate-bar"><div class="gate-label">Neutral</div><div class="gate-track"><div class="gate-fill" style="width:${r.roberta_conf[1] * 100}%;background:var(--amber)"></div></div><div class="gate-val">${r.roberta_conf[1].toFixed(2)}</div></div>
+      <div class="gate-bar"><div class="gate-label">Negative</div><div class="gate-track"><div class="gate-fill" style="width:${r.roberta_conf[2] * 100}%;background:var(--rose)"></div></div><div class="gate-val">${r.roberta_conf[2].toFixed(2)}</div></div>
     </div>
-    <div class="detail-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
-      <span class="detail-label">DOST-RoBERTa Probabilities</span>
-      <div style="display:flex;gap:4px;flex-wrap:wrap;">
-        <span class="chip">p_auth: ${r.probs[0]}</span>
-        <span class="chip">p_dec: ${r.probs[1]}</span>
-        <span class="chip">p_irr: ${r.probs[2]}</span>
-        <span class="chip">p_liv: ${r.probs[3]}</span>
+
+    <div class="pipe-section">
+      <div class="pipe-section-title"><i class="ti ti-photo-scan"></i> Stage 2b: ResNet-50 Image Features</div>
+      <div style="font-size:12px;color:var(--text2);">Visual spatial features extracted from review image.</div>
+      <div style="display:flex;gap:6px;margin-top:6px;">
+        <span class="chip mono">512-dim embedding</span>
+        <span class="chip mono">extracted ✓</span>
       </div>
     </div>
-    <div class="detail-row">
-      <span class="detail-label">M-CLIP score</span>
-      <span class="chip">${r.clip}</span>
+
+    <div class="pipe-section">
+      <div class="pipe-section-title"><i class="ti ti-git-merge"></i> Stage 3: CG Alignment & Gate Values</div>
+      <div class="detail-row" style="border-bottom:1px solid var(--border);">
+        <span class="detail-label">CG Alignment Score</span>
+        <span class="chip mono" style="background:${r.cg_alignment > 0.7 ? 'var(--emerald-light)' : 'var(--amber-light)'}; color:${r.cg_alignment > 0.7 ? 'var(--emerald)' : 'var(--amber)'}">${r.cg_alignment.toFixed(2)} — ${r.cg_alignment > 0.7 ? 'strong agreement' : 'moderate'}</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;">MODALITY GATE VALUES</div>
+        <div class="gate-bar"><div class="gate-label">Text Gate</div><div class="gate-track"><div class="gate-fill" style="width:${r.cg_gates.text * 100}%;background:var(--blue)"></div></div><div class="gate-val">${r.cg_gates.text.toFixed(2)}</div></div>
+        <div class="gate-bar"><div class="gate-label">Image Gate</div><div class="gate-track"><div class="gate-fill" style="width:${r.cg_gates.image * 100}%;background:var(--cyan)"></div></div><div class="gate-val">${r.cg_gates.image.toFixed(2)}</div></div>
+      </div>
     </div>
-    <div class="detail-row">
-      <span class="detail-label">Star rating</span>
-      <span class="stars" style="font-size:13px;">${stars(r.stars)}</span>
+
+    <div class="pipe-section">
+      <div class="pipe-section-title"><i class="ti ti-arrows-cross"></i> Cross-Attention Weights</div>
+      <div class="gate-bar"><div class="gate-label">Text→Image</div><div class="gate-track"><div class="gate-fill" style="width:${r.ca_weights.t2i * 100}%;background:var(--purple)"></div></div><div class="gate-val">${r.ca_weights.t2i.toFixed(2)}</div></div>
+      <div class="gate-bar"><div class="gate-label">Image→Text</div><div class="gate-track"><div class="gate-fill" style="width:${r.ca_weights.i2t * 100}%;background:var(--purple)"></div></div><div class="gate-val">${r.ca_weights.i2t.toFixed(2)}</div></div>
     </div>
-    <div class="detail-row">
-      <span class="detail-label">Platform</span>
-      <span class="chip">${r.platform}</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-label">Forwarded to ABSA</span>
-      <span style="font-size:12px;">
-        ${r.label === 'auth'
-          ? '<span style="color:var(--green)">Yes</span>'
-          : '<span style="color:var(--red)">No — filtered out</span>'}
-      </span>
-    </div>
-  `;
+
+    <div style="padding:14px;border-radius:var(--radius);background:var(--surface2);border:1px solid var(--border);margin-top:4px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:700;font-size:13px;">Final Prediction</span>
+        ${sentBadge(r.sentiment)}
+      </div>
+      <div class="detail-row"><span class="detail-label">Confidence</span><span class="chip mono" style="font-weight:600;">${(r.confidence * 100).toFixed(1)}%</span></div>
+      <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(r.system_action)}</div>
+      <div style="margin-top:8px;font-size:11px;padding:8px;border-radius:6px;background:var(--bg2);color:var(--text2);border:1px solid var(--border);">${r.note}</div>
+    </div>`;
 }
 
-function setClassifyFilter(f, el) {
-  classifyFilter = f;
-  selectedClassify = null;
-  document.querySelectorAll('#classify-tabs .ftab').forEach(t => t.classList.remove('active'));
+function setPipelineFilter(f, el) {
+  pipelineFilter = f;
+  selectedPipeline = null;
+  document.querySelectorAll('#pipeline-tabs .ftab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('classify-detail').innerHTML =
-    '<div class="card-title">Review detail</div>' +
-    '<div style="font-size:12px;color:var(--text3);">Select a review to inspect its scores.</div>';
-  renderClassify();
+  document.getElementById('pipeline-detail').innerHTML =
+    '<div class="card-title">Pipeline Analysis</div><div style="font-size:12px;color:var(--text3);">Select a review to inspect its full pipeline scores.</div>';
+  renderPipeline();
 }
 
-/* ── Sentiment (ABSA) ── */
 
-function renderABSA() {
-  document.getElementById('absa-list').innerHTML = absa.map((a, i) => `
-    <div class="absa-row" onclick="showABSADetail(${i})">
-      <span>${a.aspect}</span>
-      <div class="pills">
-        <span class="pill pos">+${a.pos}</span>
-        <span class="pill neu">${a.neu}</span>
-        <span class="pill neg">-${a.neg}</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-function showABSADetail(i) {
-  const a = absa[i];
-  const total = a.pos + a.neu + a.neg;
-
-  document.getElementById('absa-detail').innerHTML = `
-    <div class="card-title">${a.aspect}</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
-      <div style="background:#EAF3DE;border-radius:var(--radius);padding:10px;text-align:center;">
-        <div style="font-size:20px;font-weight:600;color:#27500A;">${Math.round(a.pos / total * 100)}%</div>
-        <div style="font-size:11px;color:#3B6D11;">Positive (${a.pos})</div>
-      </div>
-      <div style="background:#F1EFE8;border-radius:var(--radius);padding:10px;text-align:center;">
-        <div style="font-size:20px;font-weight:600;color:#444441;">${Math.round(a.neu / total * 100)}%</div>
-        <div style="font-size:11px;color:#5F5E5A;">Neutral (${a.neu})</div>
-      </div>
-      <div style="background:var(--red-light);border-radius:var(--radius);padding:10px;text-align:center;">
-        <div style="font-size:20px;font-weight:600;color:#791F1F;">${Math.round(a.neg / total * 100)}%</div>
-        <div style="font-size:11px;color:var(--red);">Negative (${a.neg})</div>
-      </div>
-    </div>
-    <div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">
-      Sample excerpts
-    </div>
-    ${a.samples.map(s => `
-      <div style="font-size:12px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius);margin-bottom:6px;color:var(--text2);line-height:1.5;">
-        "${s}"
-      </div>
-    `).join('')}
-  `;
-}
-
-/* ── Image Handling (Upload page) ── */
+/* ============================================================
+   Image Handling (Upload Page)
+   ============================================================ */
 
 function handleImages(input) {
   Array.from(input.files).forEach(f => {
@@ -399,30 +350,22 @@ function handleImages(input) {
 
 function renderImgGrid() {
   const grid = document.getElementById('img-preview-grid');
-  const thumbs = uploadedImages.map((img, i) => `
+  grid.innerHTML = uploadedImages.map((img, i) => `
     <div class="img-thumb-wrap">
       <img class="img-thumb" src="${img.url}" alt="${img.name}">
       <button class="img-remove" onclick="removeImg(${i})" title="Remove">&times;</button>
-    </div>
-  `).join('');
-
-  const addMore = `
-    <div class="img-placeholder" onclick="document.getElementById('img-input').click()">
-      <i class="ti ti-plus"></i>
-      <span>Add more</span>
-    </div>
-  `;
-
-  grid.innerHTML = thumbs + addMore;
-
+    </div>`).join('') +
+    `<div class="img-placeholder" onclick="document.getElementById('img-input').click()">
+      <i class="ti ti-plus"></i><span>Add more</span>
+    </div>`;
   document.getElementById('img-count').textContent = uploadedImages.length
-    ? `${uploadedImages.length} image${uploadedImages.length > 1 ? 's' : ''} uploaded — these will be matched against review text using M-CLIP`
+    ? `${uploadedImages.length} image${uploadedImages.length > 1 ? 's' : ''} uploaded — will be processed by ResNet-50`
     : '';
 }
 
 function removeImg(i) {
   uploadedImages.splice(i, 1);
-  if (uploadedImages.length === 0) {
+  if (!uploadedImages.length) {
     document.getElementById('img-preview-grid').innerHTML = '';
     document.getElementById('img-count').textContent = '';
   } else {
@@ -433,186 +376,132 @@ function removeImg(i) {
 function handleSingleImg(input) {
   const f = input.files[0];
   if (!f) return;
-
   const reader = new FileReader();
   reader.onload = e => {
     document.getElementById('single-img-preview').innerHTML = `
       <div class="img-thumb-wrap" style="width:80px;height:80px;">
-        <img class="img-thumb" src="${e.target.result}" style="width:80px;height:80px;">
+        <img class="img-thumb" src="${e.target.result}" alt="review" style="width:80px;height:80px;">
         <button class="img-remove" onclick="clearSingleImg()">&times;</button>
-      </div>
-    `;
+      </div>`;
   };
   reader.readAsDataURL(f);
 }
 
 function clearSingleImg() {
-  document.getElementById('single-img-input').value = '';
   document.getElementById('single-img-preview').innerHTML = `
     <div class="img-placeholder" onclick="document.getElementById('single-img-input').click()">
-      <i class="ti ti-photo-plus"></i>
-      <span>Add photo</span>
-    </div>
-  `;
+      <i class="ti ti-photo-plus"></i><span>Add</span>
+    </div>`;
+  document.getElementById('single-img-input').value = '';
 }
 
-/* ── CSV Handling ── */
+
+/* ============================================================
+   Single Review Classifier
+   ============================================================ */
+
+function classifyTest() {
+  const text = document.getElementById('test-text').value.trim();
+  if (!text) { showToast('Enter review text first'); return; }
+
+  const el = document.getElementById('test-result');
+  el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--blue);"><i class="ti ti-loader-2" style="font-size:24px;animation:spin 1s linear infinite;display:inline-block;"></i><div style="font-size:12px;margin-top:6px;">Running through pipeline…</div></div>';
+
+  setTimeout(() => {
+    const stars_n = parseInt(document.getElementById('test-stars').value);
+    const hasImg = !!document.querySelector('#single-img-preview .img-thumb');
+
+    // Simulated pipeline
+    const posWords = /(maganda|solid|worth|sulit|love|smooth|ganda|recommend|best|satisfied|great|good|nice)/i;
+    const negWords = /(panget|sira|hindi|wag|sayang|broken|defect|gasgas|maingay|misleading|laggy|disconnect)/i;
+    const hasPos = posWords.test(text);
+    const hasNeg = negWords.test(text);
+
+    let sentiment = 'neutral';
+    let roberta = [0.20, 0.60, 0.20];
+    if (hasPos && !hasNeg) { sentiment = 'positive'; roberta = [0.80 + Math.random() * 0.12, 0.10, 0.03]; }
+    else if (hasNeg && !hasPos) { sentiment = 'negative'; roberta = [0.03, 0.07, 0.82 + Math.random() * 0.10]; }
+    else if (hasPos && hasNeg) { sentiment = 'positive'; roberta = [0.55 + Math.random() * 0.15, 0.25, 0.12]; }
+
+    const cg_align = hasImg ? 0.60 + Math.random() * 0.35 : 0.40 + Math.random() * 0.25;
+    const text_gate = 0.65 + Math.random() * 0.25;
+    const img_gate = hasImg ? 0.50 + Math.random() * 0.40 : 0.15 + Math.random() * 0.20;
+    const confidence = 0.65 + Math.random() * 0.30;
+
+    const sysAction = { positive: 'Highlighted / Approved', neutral: 'Logged', negative: 'Flagged for Support' }[sentiment];
+
+    el.innerHTML = `
+      <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--surface2);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-weight:700;font-size:14px;">Pipeline Result</span>
+          ${sentBadge(sentiment)}
+        </div>
+
+        <div class="pipe-section">
+          <div class="pipe-section-title"><i class="ti ti-typography"></i> RoBERTa Features</div>
+          <div class="gate-bar"><div class="gate-label">Positive</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[0] * 100}%;background:var(--emerald)"></div></div><div class="gate-val">${roberta[0].toFixed(2)}</div></div>
+          <div class="gate-bar"><div class="gate-label">Neutral</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[1] * 100}%;background:var(--amber)"></div></div><div class="gate-val">${roberta[1].toFixed(2)}</div></div>
+          <div class="gate-bar"><div class="gate-label">Negative</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[2] * 100}%;background:var(--rose)"></div></div><div class="gate-val">${roberta[2].toFixed(2)}</div></div>
+        </div>
+
+        <div class="detail-row"><span class="detail-label">CG Alignment</span><span class="chip mono">${cg_align.toFixed(2)} — ${cg_align > 0.7 ? 'strong' : 'moderate'}</span></div>
+        <div class="detail-row"><span class="detail-label">CG Text Gate</span><span class="chip mono">${text_gate.toFixed(2)}</span></div>
+        <div class="detail-row"><span class="detail-label">CG Image Gate</span><span class="chip mono">${img_gate.toFixed(2)}</span></div>
+        <div class="detail-row"><span class="detail-label">Confidence</span><span class="chip mono">${(confidence * 100).toFixed(1)}%</span></div>
+        <div class="detail-row"><span class="detail-label">Image uploaded</span><span class="chip">${hasImg ? 'Yes — ResNet-50 processed' : 'No'}</span></div>
+        <div class="detail-row"><span class="detail-label">Stars</span><span style="color:#d4a017;">${'★'.repeat(stars_n) + '☆'.repeat(5 - stars_n)}</span></div>
+        <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(sysAction)}</div>
+
+        <div style="margin-top:10px;font-size:12px;padding:10px;border-radius:var(--radius);background:var(--bg2);color:var(--text2);border:1px solid var(--border);">${{
+          positive: 'Cross-Attention weighted text praise signals with image features. CG confirmed modality agreement and elevated positive class probability.',
+          neutral: 'No strong sentiment signal detected. CG found moderate modality alignment. Review logged for standard processing.',
+          negative: 'Negative text features dominate via CG text gate. Cross-Attention identified complaint patterns. Review flagged for customer support.'
+        }[sentiment]}</div>
+      </div>`;
+  }, 1200);
+}
+
+
+/* ============================================================
+   CSV Handling
+   ============================================================ */
 
 function handleCSV(input) {
   const f = input.files[0];
   if (!f) return;
-
-  const statusEl = document.getElementById('csv-status');
-  statusEl.style.color = 'var(--primary)';
-  statusEl.textContent = 'Reading file…';
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    const lineCount = reader.result.split('\n').filter(l => l.trim()).length;
-    statusEl.style.color = 'var(--green)';
-    statusEl.textContent = `✓ ${f.name} loaded — ${lineCount - 1} reviews found. Go to Classification to view.`;
-    setTimeout(() => goPage('classify'), 1800);
-  };
-  reader.readAsText(f);
-  input.value = '';
+  document.getElementById('csv-status').innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;padding:10px;border-radius:var(--radius);background:var(--emerald-light);border:1px solid rgba(16,185,129,0.2);">
+      <i class="ti ti-check" style="color:var(--emerald);font-size:16px;"></i>
+      <span style="color:var(--emerald);font-weight:600;">${f.name}</span>
+      <span style="color:var(--text2);">(${(f.size / 1024).toFixed(1)} KB)</span>
+    </div>`;
 }
+
+function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('dragover'); }
+function dragLeave(e) { e.currentTarget.classList.remove('dragover'); }
 
 function dropCSV(e) {
   e.preventDefault();
-  dragLeave(e);
-  const f = e.dataTransfer.files[0];
-  if (f && f.name.endsWith('.csv')) {
-    handleCSV({ files: [f] });
-  }
+  e.currentTarget.classList.remove('dragover');
+  showToast('CSV file received!');
 }
 
 function dropImages(e) {
   e.preventDefault();
-  dragLeave(e);
-  Array.from(e.dataTransfer.files)
-    .filter(f => f.type.startsWith('image/'))
-    .forEach(f => {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        uploadedImages.push({ name: f.name, url: ev.target.result });
-        renderImgGrid();
-      };
-      reader.readAsDataURL(f);
-    });
+  e.currentTarget.classList.remove('dragover');
+  showToast('Images received!');
 }
-
-function dragOver(e)  { e.preventDefault(); e.currentTarget.classList.add('dragover'); }
-function dragLeave(e) { e.currentTarget.classList.remove('dragover'); }
 
 function fakeLoad() {
-  showToast('Sample dataset loaded!');
-  setTimeout(() => goPage('dashboard'), 800);
+  showToast('Sample dataset loaded — 2,104 reviews');
+  goPage('dashboard');
 }
 
-/* ── Single Review Classifier ── */
 
-function classifyTest() {
-  const text    = document.getElementById('test-text').value.trim();
-  const starsN  = parseInt(document.getElementById('test-stars').value);
-  const resultEl = document.getElementById('test-result');
+/* ============================================================
+   Init
+   ============================================================ */
 
-  if (!text) {
-    resultEl.innerHTML = '<span style="color:var(--red);font-size:12px;">Please enter review text first.</span>';
-    return;
-  }
-
-  resultEl.innerHTML = '<span style="font-size:12px;color:var(--text3);">Analyzing…</span>';
-
-  setTimeout(() => {
-    const words  = text.split(/\s+/);
-    const hasImg = document.getElementById('single-img-input').files.length > 0;
-
-    // Simulate M-CLIP image-text similarity
-    const clip = hasImg
-      ? parseFloat((0.75 + Math.random() * 0.20).toFixed(2))
-      : parseFloat((0.20 + Math.random() * 0.75).toFixed(2));
-
-    const hasNeg = /(sira|hindi|disappointing|broken|bad|pangit|ayaw|wala|mahal|late|mabagal)/i.test(text);
-    const hasPos = /(ganda|sulit|worth|okay|solid|maganda|maayos|mabilis|magaling|perfect|goods|best|love)/i.test(text);
-
-    // Simulate DOST-RoBERTa text classification probabilities
-    const probs = { auth: 0.10, dec: 0.10, irr: 0.10, liv: 0.10 };
-    let textPred = 'auth';
-
-    if (words.length <= 4)                                             textPred = 'liv';
-    else if (/(delivery|seller|shipping|courier|ref no)/i.test(text)) textPred = 'irr';
-    else if (/(best product ever|10\/10|buy it now|scam)/i.test(text)) textPred = 'dec';
-    else                                                               textPred = 'auth';
-
-    probs[textPred] = 0.65 + Math.random() * 0.15;
-    const remainder = 1 - probs[textPred];
-    const others = Object.keys(probs).filter(k => k !== textPred);
-    probs[others[0]] = parseFloat((remainder * 0.50).toFixed(2));
-    probs[others[1]] = parseFloat((remainder * 0.30).toFixed(2));
-    probs[others[2]] = parseFloat((1 - probs[textPred] - probs[others[0]] - probs[others[1]]).toFixed(2));
-    probs[textPred]  = parseFloat(probs[textPred].toFixed(2));
-
-    // Simulate XGBoost late-fusion decision
-    let finalLabel     = textPred;
-    let conflictReason = '';
-
-    const isNegativeText = hasNeg && !hasPos;
-    const isPositiveText = hasPos && !hasNeg;
-
-    if ((isNegativeText && starsN >= 4) || (isPositiveText && starsN <= 2)) {
-      finalLabel     = 'dec';
-      conflictReason = 'XGBoost resolved conflict: extreme rating mismatch detected.';
-    } else if (textPred === 'auth' && clip < 0.3) {
-      finalLabel     = 'irr';
-      conflictReason = 'XGBoost resolved conflict: unaligned image similarity score.';
-    }
-
-    const explanations = {
-      auth: 'This review appears genuine — it has sufficient informational value, consistent rating, and no multimodal mismatch.',
-      liv:  'This review has high p_LIV probability. Very short, lacks product-specific detail, or lacks informational value.',
-      irr:  'This review appears off-topic. High p_irr or low CLIP score suggests image-text mismatch or unrelated content.',
-      dec:  'Possible deceptive review detected. High p_dec or extreme rating mismatch detected by XGBoost.'
-    };
-
-    resultEl.innerHTML = `
-      <div style="border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <span style="font-weight:600;font-size:13px;">Result</span>
-          <span class="badge ${finalLabel}">${lblTxt(finalLabel)}</span>
-        </div>
-        <div class="detail-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
-          <span class="detail-label">DOST-RoBERTa Probabilities (Text only)</span>
-          <div style="display:flex;gap:4px;flex-wrap:wrap;">
-            <span class="chip">p_auth: ${probs.auth.toFixed(2)}</span>
-            <span class="chip">p_dec: ${probs.dec.toFixed(2)}</span>
-            <span class="chip">p_irr: ${probs.irr.toFixed(2)}</span>
-            <span class="chip">p_liv: ${probs.liv.toFixed(2)}</span>
-          </div>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">M-CLIP score (simulated)</span>
-          <span class="chip">${clip.toFixed(2)} — ${clip > 0.5 ? 'image consistent' : 'possible mismatch'}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Image uploaded</span>
-          <span class="chip">${hasImg ? 'Yes' : 'No'}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Stars</span>
-          <span style="color:#BA7517;">${'★'.repeat(starsN) + '☆'.repeat(5 - starsN)}</span>
-        </div>
-        ${conflictReason
-          ? `<div style="margin-top:10px;font-size:11px;color:var(--red);font-weight:500;">${conflictReason}</div>`
-          : ''}
-        <div style="margin-top:10px;font-size:12px;padding:8px 10px;border-radius:var(--radius);background:var(--surface2);color:var(--text2);">
-          ${explanations[finalLabel]}
-        </div>
-      </div>
-    `;
-  }, 900);
-}
-
-/* ── Init ── */
 renderDash();
 
 if (window.location.hash === '#upload') {
