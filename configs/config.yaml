@@ -1,0 +1,22 @@
+model:
+  text_model: roberta-base
+  image_model: resnet50
+  embedding_dim: 512
+  num_classes: 3
+  dropout: 0.3
+
+training:
+  batch_size: 4
+  lr: 0.0001
+  finetune_lr: 0.00001 # lower lr for phase 2 when backbones are unfrozen
+  phase1_epochs: 10 # frozen backbone epochs
+  phase2_epochs: 10 # unfrozen fine-tuning epochs
+  num_workers: 0
+  device: cuda
+
+data:
+  max_length: 128
+  image_size: 224
+
+output:
+  checkpoint_dir: outputs/checkpoints

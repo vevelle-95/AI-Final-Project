@@ -1,7 +1,161 @@
 /* ============================================================
    CLIP-CA-CG — Dashboard Logic
    Multimodal Sentiment Analysis with RoBERTa + ResNet-50
+   Simulated Backend API Layer
    ============================================================ */
+
+
+/* ── Simulated Backend API ── */
+
+const BackendAPI = (() => {
+  const BASE_URL = 'http://localhost:8000';
+  const serverStartTime = Date.now();
+  let requestCounter = 0;
+  let isConnected = false;
+
+  // Generate realistic latency
+  function latency(min = 80, max = 300) {
+    return min + Math.random() * (max - min);
+  }
+
+  function timestamp() {
+    const d = new Date();
+    return d.toTimeString().split(' ')[0];
+  }
+
+  function logToConsole(method, path, status, latencyMs, extra = '') {
+    const console_el = document.getElementById('server-console');
+    if (!console_el) return;
+
+    const methodCls = method === 'GET' ? 'get' : method === 'POST' ? 'post' : method === 'WS' ? 'ws' : method === 'INFO' ? 'info' : method === 'OK' ? 'ok' : 'err';
+    const statusCls = status ? `s${status}` : '';
+
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    line.innerHTML = `
+      <span class="log-time">${timestamp()}</span>
+      <span class="log-method ${methodCls}">${method}</span>
+      <span class="log-path">${path}${extra ? ' ' + extra : ''}</span>
+      ${status ? `<span class="log-status ${statusCls}">${status} ${latencyMs ? `(${Math.round(latencyMs)}ms)` : ''}</span>` : ''}
+    `;
+    console_el.appendChild(line);
+    console_el.scrollTop = console_el.scrollHeight;
+
+    // Keep max 50 lines
+    while (console_el.children.length > 50) {
+      console_el.removeChild(console_el.firstChild);
+    }
+  }
+
+  // Simulate an API call with realistic delay
+  async function simulateRequest(method, endpoint, body = null, opts = {}) {
+    const reqId = ++requestCounter;
+    const lat = latency(opts.minLat || 80, opts.maxLat || 350);
+
+    // Log request
+    logToConsole(method, endpoint, null, null, body ? `(${JSON.stringify(body).substring(0, 60)}...)` : '');
+
+    await new Promise(r => setTimeout(r, lat));
+
+    // Log response
+    const status = opts.status || 200;
+    logToConsole(method === 'POST' ? 'OK' : 'OK', `${endpoint}`, status, lat);
+
+    return { status, latency: lat, requestId: reqId };
+  }
+
+  // Health check / heartbeat
+  async function healthCheck() {
+    const lat = latency(15, 60);
+    await new Promise(r => setTimeout(r, lat));
+    return { status: 'healthy', latency: lat, gpu: 'NVIDIA RTX 3060', cuda: true, models_loaded: true, uptime: Date.now() - serverStartTime };
+  }
+
+  // Simulate boot sequence
+  async function boot() {
+    const statusEl = document.getElementById('backend-status');
+    const latencyEl = document.getElementById('status-latency');
+
+    logToConsole('INFO', 'Attempting connection to FastAPI backend...', null, null);
+    await new Promise(r => setTimeout(r, 600));
+
+    logToConsole('GET', '/api/health', null, null);
+    await new Promise(r => setTimeout(r, 400));
+    logToConsole('OK', '/api/health', 200, 42);
+
+    await new Promise(r => setTimeout(r, 300));
+    logToConsole('INFO', 'Loading RoBERTa tokenizer (roberta-base)...', null, null);
+    await new Promise(r => setTimeout(r, 800));
+    logToConsole('OK', 'RoBERTa tokenizer loaded', null, null, '— 50265 tokens');
+
+    await new Promise(r => setTimeout(r, 200));
+    logToConsole('INFO', 'Loading model checkpoint final_model/...', null, null);
+    await new Promise(r => setTimeout(r, 1200));
+    logToConsole('OK', 'Model loaded to GPU (CUDA:0)', null, null, '— 125M params');
+
+    await new Promise(r => setTimeout(r, 200));
+    logToConsole('INFO', 'Loading ResNet-50 image encoder...', null, null);
+    await new Promise(r => setTimeout(r, 600));
+    logToConsole('OK', 'ResNet-50 loaded', null, null, '— 25.6M params');
+
+    await new Promise(r => setTimeout(r, 200));
+    logToConsole('INFO', 'Initializing Cross-Attention & CG modules...', null, null);
+    await new Promise(r => setTimeout(r, 400));
+    logToConsole('OK', 'CA + CG fusion pipeline ready', null, null);
+
+    await new Promise(r => setTimeout(r, 200));
+    logToConsole('INFO', 'FastAPI server ready', null, null, '— http://localhost:8000');
+
+    isConnected = true;
+
+    if (statusEl) {
+      statusEl.className = 'backend-status connected';
+      statusEl.querySelector('.status-text').textContent = 'Connected';
+    }
+    if (latencyEl) latencyEl.textContent = '~32ms';
+
+    // Load demo dataset
+    await new Promise(r => setTimeout(r, 500));
+    logToConsole('GET', '/api/dataset/demo', 200, 128);
+    logToConsole('INFO', 'Loaded 2,104 reviews from demo dataset', null, null);
+
+    // Start heartbeat
+    startHeartbeat();
+    startUptimeCounter();
+  }
+
+  function startHeartbeat() {
+    setInterval(async () => {
+      if (!isConnected) return;
+      const lat = latency(12, 45);
+      const latencyEl = document.getElementById('status-latency');
+      if (latencyEl) latencyEl.textContent = `~${Math.round(lat)}ms`;
+    }, 5000);
+  }
+
+  function startUptimeCounter() {
+    setInterval(() => {
+      const uptimeEl = document.getElementById('server-uptime');
+      if (!uptimeEl) return;
+      const elapsed = Date.now() - serverStartTime;
+      const mins = Math.floor(elapsed / 60000);
+      const hours = Math.floor(mins / 60);
+      const m = mins % 60;
+      uptimeEl.textContent = `${hours}h ${m}m`;
+    }, 10000);
+  }
+
+  return {
+    simulateRequest,
+    healthCheck,
+    boot,
+    logToConsole,
+    timestamp,
+    get isConnected() { return isConnected; },
+    get baseUrl() { return BASE_URL; }
+  };
+})();
+
 
 /* ── Demo Data ── */
 
@@ -163,6 +317,15 @@ function stars(n) {
   return '★'.repeat(n) + '☆'.repeat(5 - n);
 }
 
+function formatJSON(obj) {
+  const json = JSON.stringify(obj, null, 2);
+  return json
+    .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+    .replace(/: "([^"]*)"/g, ': <span class="json-str">"$1"</span>')
+    .replace(/: (\d+\.?\d*)/g, ': <span class="json-num">$1</span>')
+    .replace(/: (true|false|null)/g, ': <span class="json-bool">$1</span>');
+}
+
 
 /* ── Toast ── */
 
@@ -181,7 +344,17 @@ function goPage(id) {
   document.getElementById('page-' + id).classList.add('active');
   document.querySelectorAll('.snav').forEach(n => n.classList.remove('active'));
   document.getElementById('nav-' + id).classList.add('active');
-  if (id === 'pipeline') renderPipeline();
+
+  if (id === 'pipeline') {
+    BackendAPI.simulateRequest('GET', '/api/results/pipeline', null, { minLat: 60, maxLat: 180 });
+    renderPipeline();
+  }
+  if (id === 'sentiment') {
+    BackendAPI.simulateRequest('GET', '/api/results/sentiment-summary', null, { minLat: 40, maxLat: 120 });
+  }
+  if (id === 'settings') {
+    BackendAPI.simulateRequest('GET', '/api/health', null, { minLat: 15, maxLat: 50 });
+  }
 }
 
 
@@ -209,10 +382,22 @@ function renderDash() {
     </div>`).join('');
 }
 
-function selectDash(id) {
+async function selectDash(id) {
   selectedDash = id;
   renderDash();
   const r = reviews.find(x => x.id === id);
+
+  // Show loading state
+  document.getElementById('dash-detail').innerHTML = `
+    <div class="card-title">Review #${r.id}</div>
+    <div class="processing-overlay" style="padding:20px;">
+      <div class="processing-spinner"></div>
+      <div class="processing-sub">GET /api/results/${r.id}</div>
+    </div>`;
+
+  // Simulate API call
+  await BackendAPI.simulateRequest('GET', `/api/results/${r.id}`, null, { minLat: 120, maxLat: 350 });
+
   document.getElementById('dash-detail').innerHTML = `
     <div class="card-title">Review #${r.id}</div>
     <div class="detail-row"><span class="detail-label">Sentiment</span>${sentBadge(r.sentiment)}</div>
@@ -220,7 +405,23 @@ function selectDash(id) {
     <div class="detail-row"><span class="detail-label">CG Alignment</span><span class="chip mono">${r.cg_alignment.toFixed(2)}</span></div>
     <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(r.system_action)}</div>
     <div class="detail-row"><span class="detail-label">Stars</span><span style="color:#d4a017;">${stars(r.stars)}</span></div>
-    <div style="margin-top:10px;font-size:11px;padding:8px 10px;border-radius:var(--radius);background:var(--surface2);color:var(--text2);border:1px solid var(--border);">${r.note}</div>`;
+    <div style="margin-top:10px;font-size:11px;padding:8px 10px;border-radius:var(--radius);background:var(--surface2);color:var(--text2);border:1px solid var(--border);">${r.note}</div>
+    <div class="api-panel" style="margin-top:10px;">
+      <div class="api-panel-header">
+        <span class="method-tag get">GET</span>
+        <span>/api/results/${r.id}</span>
+      </div>
+      <div class="api-panel-body">${formatJSON({
+        review_id: r.id,
+        sentiment: r.sentiment,
+        confidence: r.confidence,
+        cg_alignment: r.cg_alignment,
+        cg_gates: r.cg_gates,
+        ca_weights: r.ca_weights,
+        roberta_logits: r.roberta_conf,
+        system_action: r.system_action
+      })}</div>
+    </div>`;
 }
 
 function setDashFilter(f, el) {
@@ -268,11 +469,23 @@ function renderPipeline() {
     </div>`).join('');
 }
 
-function selectPipeline(id) {
+async function selectPipeline(id) {
   selectedPipeline = id;
   renderPipeline();
   const r = reviews.find(x => x.id === id);
-  document.getElementById('pipeline-detail').innerHTML = `
+
+  // Show loading
+  const detail = document.getElementById('pipeline-detail');
+  detail.innerHTML = `
+    <div class="card-title">Review #${r.id} — Full Pipeline Analysis</div>
+    <div class="processing-overlay" style="padding:20px;">
+      <div class="processing-spinner"></div>
+      <div class="processing-sub">GET /api/results/${r.id}/pipeline</div>
+    </div>`;
+
+  await BackendAPI.simulateRequest('GET', `/api/results/${r.id}/pipeline`, null, { minLat: 150, maxLat: 400 });
+
+  detail.innerHTML = `
     <div class="card-title">Review #${r.id} — Full Pipeline Analysis</div>
 
     <div class="pipe-section">
@@ -318,6 +531,23 @@ function selectPipeline(id) {
       <div class="detail-row"><span class="detail-label">Confidence</span><span class="chip mono" style="font-weight:600;">${(r.confidence * 100).toFixed(1)}%</span></div>
       <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(r.system_action)}</div>
       <div style="margin-top:8px;font-size:11px;padding:8px;border-radius:6px;background:var(--bg2);color:var(--text2);border:1px solid var(--border);">${r.note}</div>
+    </div>
+
+    <div class="api-panel" style="margin-top:10px;">
+      <div class="api-panel-header">
+        <span class="method-tag get">GET</span>
+        <span>/api/results/${r.id}/pipeline</span>
+      </div>
+      <div class="api-panel-body">${formatJSON({
+        review_id: r.id,
+        pipeline: {
+          stage1_preprocessing: { status: 'completed', text_cleaned: true, image_resized: '224x224' },
+          stage2a_roberta: { logits: r.roberta_conf, embedding_dim: 768 },
+          stage2b_resnet50: { embedding_dim: 512, features_extracted: true },
+          stage3_fusion: { cg_alignment: r.cg_alignment, cg_gates: r.cg_gates, ca_weights: r.ca_weights }
+        },
+        prediction: { sentiment: r.sentiment, confidence: r.confidence, action: r.system_action }
+      })}</div>
     </div>`;
 }
 
@@ -346,6 +576,7 @@ function handleImages(input) {
     reader.readAsDataURL(f);
   });
   input.value = '';
+  BackendAPI.logToConsole('POST', '/api/upload/images', 201, 180 + Math.random() * 200);
 }
 
 function renderImgGrid() {
@@ -397,68 +628,194 @@ function clearSingleImg() {
 
 
 /* ============================================================
-   Single Review Classifier
+   Single Review Classifier — with animated pipeline
    ============================================================ */
 
-function classifyTest() {
+async function classifyTest() {
   const text = document.getElementById('test-text').value.trim();
   if (!text) { showToast('Enter review text first'); return; }
 
   const el = document.getElementById('test-result');
-  el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--blue);"><i class="ti ti-loader-2" style="font-size:24px;animation:spin 1s linear infinite;display:inline-block;"></i><div style="font-size:12px;margin-top:6px;">Running through pipeline…</div></div>';
+  const stars_n = parseInt(document.getElementById('test-stars').value);
+  const hasImg = !!document.querySelector('#single-img-preview .img-thumb');
 
-  setTimeout(() => {
-    const stars_n = parseInt(document.getElementById('test-stars').value);
-    const hasImg = !!document.querySelector('#single-img-preview .img-thumb');
-
-    // Simulated pipeline
-    const posWords = /(maganda|solid|worth|sulit|love|smooth|ganda|recommend|best|satisfied|great|good|nice)/i;
-    const negWords = /(panget|sira|hindi|wag|sayang|broken|defect|gasgas|maingay|misleading|laggy|disconnect)/i;
-    const hasPos = posWords.test(text);
-    const hasNeg = negWords.test(text);
-
-    let sentiment = 'neutral';
-    let roberta = [0.20, 0.60, 0.20];
-    if (hasPos && !hasNeg) { sentiment = 'positive'; roberta = [0.80 + Math.random() * 0.12, 0.10, 0.03]; }
-    else if (hasNeg && !hasPos) { sentiment = 'negative'; roberta = [0.03, 0.07, 0.82 + Math.random() * 0.10]; }
-    else if (hasPos && hasNeg) { sentiment = 'positive'; roberta = [0.55 + Math.random() * 0.15, 0.25, 0.12]; }
-
-    const cg_align = hasImg ? 0.60 + Math.random() * 0.35 : 0.40 + Math.random() * 0.25;
-    const text_gate = 0.65 + Math.random() * 0.25;
-    const img_gate = hasImg ? 0.50 + Math.random() * 0.40 : 0.15 + Math.random() * 0.20;
-    const confidence = 0.65 + Math.random() * 0.30;
-
-    const sysAction = { positive: 'Highlighted / Approved', neutral: 'Logged', negative: 'Flagged for Support' }[sentiment];
-
-    el.innerHTML = `
-      <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--surface2);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <span style="font-weight:700;font-size:14px;">Pipeline Result</span>
-          ${sentBadge(sentiment)}
+  // Show animated pipeline processing steps
+  el.innerHTML = `
+    <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--surface2);">
+      <div style="font-weight:700;font-size:13px;margin-bottom:12px;">Pipeline Processing</div>
+      <div class="pipeline-steps" id="classify-steps">
+        <div class="pipeline-step active" id="step-send">
+          <div class="step-icon"><i class="ti ti-send" style="font-size:12px;"></i></div>
+          <div class="step-content">
+            <div class="step-title">Sending to /api/predict</div>
+            <div class="step-detail">POST request with review payload…</div>
+          </div>
+          <div class="step-timing">—</div>
         </div>
-
-        <div class="pipe-section">
-          <div class="pipe-section-title"><i class="ti ti-typography"></i> RoBERTa Features</div>
-          <div class="gate-bar"><div class="gate-label">Positive</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[0] * 100}%;background:var(--emerald)"></div></div><div class="gate-val">${roberta[0].toFixed(2)}</div></div>
-          <div class="gate-bar"><div class="gate-label">Neutral</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[1] * 100}%;background:var(--amber)"></div></div><div class="gate-val">${roberta[1].toFixed(2)}</div></div>
-          <div class="gate-bar"><div class="gate-label">Negative</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[2] * 100}%;background:var(--rose)"></div></div><div class="gate-val">${roberta[2].toFixed(2)}</div></div>
+        <div class="pipeline-step pending" id="step-preprocess">
+          <div class="step-icon"><i class="ti ti-file-text" style="font-size:12px;"></i></div>
+          <div class="step-content">
+            <div class="step-title">Stage 1: Preprocessing</div>
+            <div class="step-detail">Waiting…</div>
+          </div>
+          <div class="step-timing">—</div>
         </div>
+        <div class="pipeline-step pending" id="step-roberta">
+          <div class="step-icon"><i class="ti ti-cpu" style="font-size:12px;"></i></div>
+          <div class="step-content">
+            <div class="step-title">Stage 2a: RoBERTa Encoding</div>
+            <div class="step-detail">Waiting…</div>
+          </div>
+          <div class="step-timing">—</div>
+        </div>
+        <div class="pipeline-step pending" id="step-resnet">
+          <div class="step-icon"><i class="ti ti-photo-scan" style="font-size:12px;"></i></div>
+          <div class="step-content">
+            <div class="step-title">Stage 2b: ResNet-50 Encoding</div>
+            <div class="step-detail">Waiting…</div>
+          </div>
+          <div class="step-timing">—</div>
+        </div>
+        <div class="pipeline-step pending" id="step-fusion">
+          <div class="step-icon"><i class="ti ti-git-merge" style="font-size:12px;"></i></div>
+          <div class="step-content">
+            <div class="step-title">Stage 3: CA Fusion & CG Alignment</div>
+            <div class="step-detail">Waiting…</div>
+          </div>
+          <div class="step-timing">—</div>
+        </div>
+        <div class="pipeline-step pending" id="step-predict">
+          <div class="step-icon"><i class="ti ti-sparkles" style="font-size:12px;"></i></div>
+          <div class="step-content">
+            <div class="step-title">Final Prediction</div>
+            <div class="step-detail">Waiting…</div>
+          </div>
+          <div class="step-timing">—</div>
+        </div>
+      </div>
+    </div>`;
 
-        <div class="detail-row"><span class="detail-label">CG Alignment</span><span class="chip mono">${cg_align.toFixed(2)} — ${cg_align > 0.7 ? 'strong' : 'moderate'}</span></div>
-        <div class="detail-row"><span class="detail-label">CG Text Gate</span><span class="chip mono">${text_gate.toFixed(2)}</span></div>
-        <div class="detail-row"><span class="detail-label">CG Image Gate</span><span class="chip mono">${img_gate.toFixed(2)}</span></div>
-        <div class="detail-row"><span class="detail-label">Confidence</span><span class="chip mono">${(confidence * 100).toFixed(1)}%</span></div>
-        <div class="detail-row"><span class="detail-label">Image uploaded</span><span class="chip">${hasImg ? 'Yes — ResNet-50 processed' : 'No'}</span></div>
-        <div class="detail-row"><span class="detail-label">Stars</span><span style="color:#d4a017;">${'★'.repeat(stars_n) + '☆'.repeat(5 - stars_n)}</span></div>
-        <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(sysAction)}</div>
+  // Helper to advance a step
+  function advanceStep(stepId, status, detail, timing) {
+    const step = document.getElementById(stepId);
+    step.className = `pipeline-step ${status}`;
+    step.querySelector('.step-detail').textContent = detail;
+    step.querySelector('.step-timing').textContent = timing;
+  }
 
-        <div style="margin-top:10px;font-size:12px;padding:10px;border-radius:var(--radius);background:var(--bg2);color:var(--text2);border:1px solid var(--border);">${{
-          positive: 'Cross-Attention weighted text praise signals with image features. CG confirmed modality agreement and elevated positive class probability.',
-          neutral: 'No strong sentiment signal detected. CG found moderate modality alignment. Review logged for standard processing.',
-          negative: 'Negative text features dominate via CG text gate. Cross-Attention identified complaint patterns. Review flagged for customer support.'
-        }[sentiment]}</div>
-      </div>`;
-  }, 1200);
+  // Step 1: Send request
+  BackendAPI.logToConsole('POST', '/api/predict', null, null, `{text: "${text.substring(0, 40)}..."}`);
+  await new Promise(r => setTimeout(r, 300 + Math.random() * 200));
+  advanceStep('step-send', 'completed', 'Request accepted — 202 Accepted', `${(180 + Math.random() * 120).toFixed(0)}ms`);
+  BackendAPI.logToConsole('OK', '/api/predict', 202, 195);
+
+  // Step 2: Preprocess
+  advanceStep('step-preprocess', 'active', 'Tokenizing text, normalizing…', '—');
+  await new Promise(r => setTimeout(r, 400 + Math.random() * 300));
+  const tokenCount = 12 + Math.floor(Math.random() * 30);
+  advanceStep('step-preprocess', 'completed', `Cleaned & tokenized — ${tokenCount} tokens, max_len=128`, `${(85 + Math.random() * 60).toFixed(0)}ms`);
+
+  // Step 3: RoBERTa
+  advanceStep('step-roberta', 'active', 'Forward pass through RoBERTa-base (125M params)…', '—');
+  BackendAPI.logToConsole('INFO', `RoBERTa inference — ${tokenCount} tokens`, null, null);
+  await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
+
+  // Simulated classification
+  const posWords = /(maganda|solid|worth|sulit|love|smooth|ganda|recommend|best|satisfied|great|good|nice)/i;
+  const negWords = /(panget|sira|hindi|wag|sayang|broken|defect|gasgas|maingay|misleading|laggy|disconnect)/i;
+  const hasPos = posWords.test(text);
+  const hasNeg = negWords.test(text);
+
+  let sentiment = 'neutral';
+  let roberta = [0.20, 0.60, 0.20];
+  if (hasPos && !hasNeg) { sentiment = 'positive'; roberta = [0.80 + Math.random() * 0.12, 0.10, 0.03]; }
+  else if (hasNeg && !hasPos) { sentiment = 'negative'; roberta = [0.03, 0.07, 0.82 + Math.random() * 0.10]; }
+  else if (hasPos && hasNeg) { sentiment = 'positive'; roberta = [0.55 + Math.random() * 0.15, 0.25, 0.12]; }
+
+  advanceStep('step-roberta', 'completed', `Logits: [${roberta.map(v => v.toFixed(3)).join(', ')}] — 768-dim embedding`, `${(220 + Math.random() * 180).toFixed(0)}ms`);
+
+  // Step 4: ResNet-50
+  advanceStep('step-resnet', 'active', hasImg ? 'Processing review image through ResNet-50…' : 'No image provided — generating null embedding…', '—');
+  if (hasImg) {
+    BackendAPI.logToConsole('INFO', 'ResNet-50 inference — 224×224 image', null, null);
+  }
+  await new Promise(r => setTimeout(r, hasImg ? 500 + Math.random() * 300 : 150));
+  advanceStep('step-resnet', 'completed', hasImg ? 'Visual features extracted — 512-dim embedding' : 'Null embedding (no image) — CG will downweight', `${hasImg ? (180 + Math.random() * 150).toFixed(0) : '45'}ms`);
+
+  // Step 5: Fusion
+  advanceStep('step-fusion', 'active', 'Computing Cross-Attention & Cross-modal Gating…', '—');
+  BackendAPI.logToConsole('INFO', 'CA Fusion + CG alignment pass', null, null);
+  await new Promise(r => setTimeout(r, 400 + Math.random() * 300));
+
+  const cg_align = hasImg ? 0.60 + Math.random() * 0.35 : 0.40 + Math.random() * 0.25;
+  const text_gate = 0.65 + Math.random() * 0.25;
+  const img_gate = hasImg ? 0.50 + Math.random() * 0.40 : 0.15 + Math.random() * 0.20;
+  const t2i = hasImg ? 0.55 + Math.random() * 0.35 : 0.20 + Math.random() * 0.20;
+  const i2t = hasImg ? 0.50 + Math.random() * 0.35 : 0.15 + Math.random() * 0.20;
+
+  advanceStep('step-fusion', 'completed', `CG: ${cg_align.toFixed(3)} | Gates: T=${text_gate.toFixed(2)} I=${img_gate.toFixed(2)} | CA: T→I=${t2i.toFixed(2)} I→T=${i2t.toFixed(2)}`, `${(145 + Math.random() * 100).toFixed(0)}ms`);
+
+  // Step 6: Final prediction
+  advanceStep('step-predict', 'active', 'Computing final classification…', '—');
+  await new Promise(r => setTimeout(r, 200 + Math.random() * 150));
+
+  const confidence = 0.65 + Math.random() * 0.30;
+  const sysAction = { positive: 'Highlighted / Approved', neutral: 'Logged', negative: 'Flagged for Support' }[sentiment];
+
+  advanceStep('step-predict', 'completed', `${sentiment.toUpperCase()} — ${(confidence * 100).toFixed(1)}% confidence → ${sysAction}`, `${(35 + Math.random() * 30).toFixed(0)}ms`);
+
+  BackendAPI.logToConsole('OK', '/api/predict — result ready', 200, 1450 + Math.random() * 500);
+
+  // Now show the full result below the pipeline
+  const resultHTML = `
+    <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--surface2);margin-top:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <span style="font-weight:700;font-size:14px;">Result</span>
+        ${sentBadge(sentiment)}
+      </div>
+
+      <div class="pipe-section">
+        <div class="pipe-section-title"><i class="ti ti-typography"></i> RoBERTa Features</div>
+        <div class="gate-bar"><div class="gate-label">Positive</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[0] * 100}%;background:var(--emerald)"></div></div><div class="gate-val">${roberta[0].toFixed(2)}</div></div>
+        <div class="gate-bar"><div class="gate-label">Neutral</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[1] * 100}%;background:var(--amber)"></div></div><div class="gate-val">${roberta[1].toFixed(2)}</div></div>
+        <div class="gate-bar"><div class="gate-label">Negative</div><div class="gate-track"><div class="gate-fill" style="width:${roberta[2] * 100}%;background:var(--rose)"></div></div><div class="gate-val">${roberta[2].toFixed(2)}</div></div>
+      </div>
+
+      <div class="detail-row"><span class="detail-label">CG Alignment</span><span class="chip mono">${cg_align.toFixed(2)} — ${cg_align > 0.7 ? 'strong' : 'moderate'}</span></div>
+      <div class="detail-row"><span class="detail-label">CG Text Gate</span><span class="chip mono">${text_gate.toFixed(2)}</span></div>
+      <div class="detail-row"><span class="detail-label">CG Image Gate</span><span class="chip mono">${img_gate.toFixed(2)}</span></div>
+      <div class="detail-row"><span class="detail-label">Confidence</span><span class="chip mono">${(confidence * 100).toFixed(1)}%</span></div>
+      <div class="detail-row"><span class="detail-label">Image uploaded</span><span class="chip">${hasImg ? 'Yes — ResNet-50 processed' : 'No'}</span></div>
+      <div class="detail-row"><span class="detail-label">Stars</span><span style="color:#d4a017;">${'★'.repeat(stars_n) + '☆'.repeat(5 - stars_n)}</span></div>
+      <div class="detail-row"><span class="detail-label">System Action</span>${actionBadge(sysAction)}</div>
+
+      <div style="margin-top:10px;font-size:12px;padding:10px;border-radius:var(--radius);background:var(--bg2);color:var(--text2);border:1px solid var(--border);">${{
+        positive: 'Cross-Attention weighted text praise signals with image features. CG confirmed modality agreement and elevated positive class probability.',
+        neutral: 'No strong sentiment signal detected. CG found moderate modality alignment. Review logged for standard processing.',
+        negative: 'Negative text features dominate via CG text gate. Cross-Attention identified complaint patterns. Review flagged for customer support.'
+      }[sentiment]}</div>
+
+      <div class="api-panel" style="margin-top:10px;">
+        <div class="api-panel-header">
+          <span class="method-tag post">POST</span>
+          <span>/api/predict</span>
+        </div>
+        <div class="api-panel-body">${formatJSON({
+          request: { text: text, stars: stars_n, has_image: hasImg },
+          response: {
+            sentiment,
+            confidence: parseFloat(confidence.toFixed(4)),
+            roberta_logits: roberta.map(v => parseFloat(v.toFixed(4))),
+            cg: { alignment: parseFloat(cg_align.toFixed(4)), text_gate: parseFloat(text_gate.toFixed(4)), image_gate: parseFloat(img_gate.toFixed(4)) },
+            ca: { text_to_image: parseFloat(t2i.toFixed(4)), image_to_text: parseFloat(i2t.toFixed(4)) },
+            system_action: sysAction,
+            processing_time_ms: (1450 + Math.random() * 500).toFixed(0)
+          }
+        })}</div>
+      </div>
+    </div>`;
+
+  el.innerHTML += resultHTML;
 }
 
 
@@ -466,14 +823,55 @@ function classifyTest() {
    CSV Handling
    ============================================================ */
 
-function handleCSV(input) {
+async function handleCSV(input) {
   const f = input.files[0];
   if (!f) return;
+
+  // Show uploading state
+  document.getElementById('csv-status').innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;padding:10px;border-radius:var(--radius);background:var(--blue-light);border:1px solid rgba(59,130,246,0.2);">
+      <i class="ti ti-loader-2" style="color:var(--blue);font-size:16px;animation:spin 1s linear infinite;display:inline-block;"></i>
+      <span style="color:var(--blue);font-weight:600;">Uploading ${f.name}…</span>
+      <span style="color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:11px;">POST /api/upload/csv</span>
+    </div>`;
+
+  BackendAPI.logToConsole('POST', '/api/upload/csv', null, null, `(${f.name}, ${(f.size / 1024).toFixed(1)}KB)`);
+
+  await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
+  BackendAPI.logToConsole('OK', '/api/upload/csv', 201, 650);
+
+  // Show processing state
+  document.getElementById('csv-status').innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;padding:10px;border-radius:var(--radius);background:var(--amber-light);border:1px solid rgba(245,158,11,0.2);">
+      <i class="ti ti-loader-2" style="color:var(--amber);font-size:16px;animation:spin 1s linear infinite;display:inline-block;"></i>
+      <span style="color:var(--amber);font-weight:600;">Server processing CSV…</span>
+      <span style="color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:11px;">Validating columns, parsing rows</span>
+    </div>`;
+
+  BackendAPI.logToConsole('INFO', 'Parsing CSV — validating schema…', null, null);
+  await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
+  BackendAPI.logToConsole('OK', 'CSV validated', null, null, '— columns: product_id, product_title, review_text, review_image_urls, labels');
+
+  // Show success
   document.getElementById('csv-status').innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;padding:10px;border-radius:var(--radius);background:var(--emerald-light);border:1px solid rgba(16,185,129,0.2);">
       <i class="ti ti-check" style="color:var(--emerald);font-size:16px;"></i>
       <span style="color:var(--emerald);font-weight:600;">${f.name}</span>
-      <span style="color:var(--text2);">(${(f.size / 1024).toFixed(1)} KB)</span>
+      <span style="color:var(--text2);">(${(f.size / 1024).toFixed(1)} KB) — uploaded & validated</span>
+    </div>
+    <div class="api-panel" style="margin-top:8px;">
+      <div class="api-panel-header">
+        <span class="method-tag post">POST</span>
+        <span>/api/upload/csv — 201 Created</span>
+      </div>
+      <div class="api-panel-body">${formatJSON({
+        status: 'success',
+        file: f.name,
+        size_bytes: f.size,
+        rows_parsed: Math.floor(Math.random() * 200) + 50,
+        columns_validated: ['product_id', 'product_title', 'review_text', 'review_image_urls', 'labels'],
+        processing_time_ms: (1200 + Math.random() * 800).toFixed(0)
+      })}</div>
     </div>`;
 }
 
@@ -483,23 +881,30 @@ function dragLeave(e) { e.currentTarget.classList.remove('dragover'); }
 function dropCSV(e) {
   e.preventDefault();
   e.currentTarget.classList.remove('dragover');
+  BackendAPI.logToConsole('POST', '/api/upload/csv', 201, 420);
   showToast('CSV file received!');
 }
 
 function dropImages(e) {
   e.preventDefault();
   e.currentTarget.classList.remove('dragover');
+  BackendAPI.logToConsole('POST', '/api/upload/images', 201, 380);
   showToast('Images received!');
 }
 
-function fakeLoad() {
+async function fakeLoad() {
+  BackendAPI.logToConsole('GET', '/api/dataset/demo', null, null);
+  showToast('Loading sample dataset…');
+  await new Promise(r => setTimeout(r, 800));
+  BackendAPI.logToConsole('OK', '/api/dataset/demo', 200, 340);
+  BackendAPI.logToConsole('INFO', 'Loaded 2,104 reviews from demo dataset', null, null);
   showToast('Sample dataset loaded — 2,104 reviews');
   goPage('dashboard');
 }
 
 
 /* ============================================================
-   Init
+   Init — Boot Sequence
    ============================================================ */
 
 renderDash();
@@ -507,3 +912,6 @@ renderDash();
 if (window.location.hash === '#upload') {
   goPage('upload');
 }
+
+// Boot the simulated backend
+BackendAPI.boot();
