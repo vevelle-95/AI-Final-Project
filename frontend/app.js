@@ -1138,6 +1138,61 @@ async function exportResults() {
 
 
 /* ============================================================
+   Clear Dataset — Real API call
+   ============================================================ */
+
+async function clearDataset() {
+  if (!BackendAPI.isConnected) {
+    showToast('Backend not connected!');
+    return;
+  }
+
+  try {
+    await BackendAPI.apiCall('DELETE', '/api/results');
+    reviews = [];
+    
+    // Clear dash selections
+    selectedDash = null;
+    selectedPipeline = null;
+    
+    // Reset dashboard to empty state
+    updateDashboardMetrics();
+    renderDash();
+    renderPipeline();
+    updateSentimentPage();
+    
+    // Reset product row and details
+    const dashProductRow = document.querySelector('#page-dashboard .product-row');
+    if (dashProductRow) {
+      dashProductRow.innerHTML = `
+        <i class="ti ti-shopping-bag"></i>
+        <span>Product:</span>
+        <strong>—</strong>
+        <span>&middot;</span><span>E-Commerce Dataset</span>
+        <span>&middot;</span><span>Upload CSV to begin</span>
+      `;
+    }
+    
+    const dashDetail = document.getElementById('dash-detail');
+    if (dashDetail) {
+      dashDetail.innerHTML =
+        '<div class="card-title">Review Detail</div><div style="font-size:12px;color:var(--text3);">Click a review to see its full pipeline analysis.</div>';
+    }
+      
+    const pipelineDetail = document.getElementById('pipeline-detail');
+    if (pipelineDetail) {
+      pipelineDetail.innerHTML =
+        '<div class="card-title">Pipeline Analysis</div><div style="font-size:12px;color:var(--text3);">Select a review to inspect its full pipeline scores.</div>';
+    }
+      
+    showToast('Dataset cleared from backend and UI!');
+  } catch (err) {
+    showToast(`Clear failed: ${err.message}`);
+  }
+}
+
+
+/* ============================================================
    Load Sample Dataset — Real API call
    ============================================================ */
 

@@ -1,132 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLIP-CA-CG — Multimodal Sentiment Analysis</title>
-<meta name="description" content="CLIP-CA-CG: Lu et al's Multimodal Sentiment Analysis Model using RoBERTa and ResNet-50 with Cross-Attention and Cross-modal Gating.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLIP-CA-CG — Multimodal Sentiment Analysis</title>
+  <meta name="description"
+    content="CLIP-CA-CG: Lu et al's Multimodal Sentiment Analysis Model using RoBERTa and ResNet-50 with Cross-Attention and Cross-modal Gating.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-<div class="bg-mesh"></div>
-<div class="grid-overlay"></div>
+  <div class="bg-mesh"></div>
+  <div class="grid-overlay"></div>
 
-<nav class="nav">
-  <div class="logo">
-    <div class="logo-icon"><i class="ti ti-brain"></i></div>
-    <span>CLIP<span class="accent">-CA-CG</span></span>
-  </div>
-  <div class="nav-links">
-    <a href="#features" class="nav-link">Features</a>
-    <a href="#tech" class="nav-link">Tech Stack</a>
-    <a href="authenticheck.html" class="btn btn-primary btn-sm"><i class="ti ti-layout-dashboard"></i> Open Dashboard</a>
-  </div>
-</nav>
+  <nav class="nav">
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-brain"></i></div>
+      <span>CLIP<span class="accent">-CA-CG</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#tech" class="nav-link">Tech Stack</a>
+      <a href="authenticheck.html" class="btn btn-primary btn-sm"><i class="ti ti-layout-dashboard"></i> Open
+        Dashboard</a>
+    </div>
+  </nav>
 
-<main class="hero">
-  <div class="hero-badge"><span class="dot"></span> Lu et al. — Multimodal Deep Learning</div>
-  
-  <h1 class="hero-title">
-    <span class="gradient">Multimodal Sentiment</span><br>
-    Analysis for E-Commerce
-  </h1>
-  
-  <p class="hero-subtitle">
-    Analyzes e-commerce reviews by capturing textual data with <strong>RoBERTa</strong> and visual data with <strong>ResNet-50</strong>, then fusing them via <strong>Cross-Attention</strong> and <strong>Cross-modal Gating</strong> to predict customer sentiment.
-  </p>
-  
-  <div class="hero-actions">
-    <a href="authenticheck.html" class="btn btn-primary"><i class="ti ti-layout-dashboard"></i> View Dashboard</a>
-    <a href="authenticheck.html#upload" class="btn btn-outline"><i class="ti ti-upload"></i> Upload Reviews</a>
-  </div>
+  <main class="hero">
+    <div class="hero-badge"><span class="dot"></span> Lu et al. — Multimodal Deep Learning</div>
 
-  <!-- Pipeline visualization -->
-  <div class="pipeline-visual">
-    <div class="pipe-node">
-      <div class="pipe-icon"><i class="ti ti-file-text"></i></div>
-      <div class="pipe-label">Preprocessing</div>
-    </div>
-    <div class="pipe-arrow">→</div>
-    <div class="pipe-node">
-      <div class="pipe-icon"><i class="ti ti-cpu"></i></div>
-      <div class="pipe-label">Feature Extraction</div>
-    </div>
-    <div class="pipe-arrow">→</div>
-    <div class="pipe-node">
-      <div class="pipe-icon"><i class="ti ti-arrows-cross"></i></div>
-      <div class="pipe-label">CA Fusion & CG Alignment</div>
-    </div>
-    <div class="pipe-arrow">→</div>
-    <div class="pipe-node">
-      <div class="pipe-icon"><i class="ti ti-chart-dots-3"></i></div>
-      <div class="pipe-label">Sentiment Prediction</div>
-    </div>
-  </div>
-</main>
+    <h1 class="hero-title">
+      <span class="gradient">Multimodal Sentiment</span><br>
+      Analysis for E-Commerce
+    </h1>
 
-<section class="features" id="features">
-  <div class="section-tag">Key Capabilities</div>
-  <h2 class="section-title">Intelligent Multimodal Pipeline</h2>
-  
-  <div class="feature-grid">
-    <div class="feature-card">
-      <div class="feature-icon"><i class="ti ti-brain"></i></div>
-      <div class="feature-name">Multimodal Sentiment Classification</div>
-      <div class="feature-desc">Jointly analyzes review text and product images to determine Positive, Negative, or Neutral sentiment with high confidence.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><i class="ti ti-arrows-exchange"></i></div>
-      <div class="feature-name">Cross-modal Gating Alignment</div>
-      <div class="feature-desc">CG maps text and image embeddings into a shared latent space, evaluating modality agreement and controlling each modality's contribution.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><i class="ti ti-layers-intersect"></i></div>
-      <div class="feature-name">Cross-Attention Fusion</div>
-      <div class="feature-desc">Text and images dynamically weigh each other — a defect image elevates negative probability while a quality photo boosts positive classification.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><i class="ti ti-flag"></i></div>
-      <div class="feature-name">Automated Review Triage</div>
-      <div class="feature-desc">Negative reviews are flagged for customer support, neutral reviews are logged, and positive reviews are highlighted and approved automatically.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><i class="ti ti-chart-bar"></i></div>
-      <div class="feature-name">Product-Level Aggregation</div>
-      <div class="feature-desc">Detects sustained negative sentiment patterns across reviews, triggering product-level alerts for quality control intervention.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><i class="ti ti-sparkles"></i></div>
-      <div class="feature-name">State-of-the-Art Deep Learning</div>
-      <div class="feature-desc">Powered by RoBERTa for semantic text understanding and ResNet-50 for spatial visual feature extraction — pre-trained on massive datasets.</div>
-    </div>
-  </div>
-</section>
+    <p class="hero-subtitle">
+      Analyzes twitter posts by capturing textual data with <strong>RoBERTa</strong> and visual data with
+      <strong>ResNet-50</strong>, then fusing them via <strong>Cross-Attention</strong> and <strong>Cross-modal
+        Gating</strong> to predict customer sentiment.
+    </p>
 
-<section class="tech" id="tech">
-  <div style="text-align:center;margin-bottom:32px;">
-    <div class="section-tag">Technology Stack</div>
-    <h2 class="section-title" style="margin-bottom:16px;">Built with Modern AI</h2>
-  </div>
-  <div class="tech-row">
-    <div class="tech-pill"><i class="ti ti-brand-python"></i> FastAPI</div>
-    <div class="tech-pill"><i class="ti ti-flame"></i> PyTorch</div>
-    <div class="tech-pill"><i class="ti ti-robot"></i> HuggingFace</div>
-    <div class="tech-pill"><i class="ti ti-typography"></i> RoBERTa</div>
-    <div class="tech-pill"><i class="ti ti-photo-scan"></i> ResNet-50</div>
-    <div class="tech-pill"><i class="ti ti-arrows-cross"></i> Cross-Attention</div>
-    <div class="tech-pill"><i class="ti ti-git-merge"></i> Cross-modal Gating</div>
-    <div class="tech-pill"><i class="ti ti-table"></i> Pandas</div>
-  </div>
-</section>
+    <div class="hero-actions">
+      <a href="authenticheck.html" class="btn btn-primary"><i class="ti ti-layout-dashboard"></i> View Dashboard</a>
+      <a href="authenticheck.html#upload" class="btn btn-outline"><i class="ti ti-upload"></i> Upload Reviews</a>
+    </div>
 
-<footer class="footer">
-  CLIP-CA-CG · Lu et al. Multimodal Sentiment Analysis · Introduction to Artificial Intelligence · 2025
-</footer>
+    <!-- Pipeline visualization -->
+    <div class="pipeline-visual">
+      <div class="pipe-node">
+        <div class="pipe-icon"><i class="ti ti-file-text"></i></div>
+        <div class="pipe-label">Preprocessing</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">
+        <div class="pipe-icon"><i class="ti ti-cpu"></i></div>
+        <div class="pipe-label">Feature Extraction</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">
+        <div class="pipe-icon"><i class="ti ti-arrows-cross"></i></div>
+        <div class="pipe-label">CA Fusion & CG Alignment</div>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-node">
+        <div class="pipe-icon"><i class="ti ti-chart-dots-3"></i></div>
+        <div class="pipe-label">Sentiment Prediction</div>
+      </div>
+    </div>
+  </main>
+
+  <section class="features" id="features">
+    <div class="section-tag">Key Capabilities</div>
+    <h2 class="section-title">Intelligent Multimodal Pipeline</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-brain"></i></div>
+        <div class="feature-name">Multimodal Sentiment Classification</div>
+        <div class="feature-desc">Jointly analyzes review text and product images to determine Positive, Negative, or
+          Neutral sentiment with high confidence.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-arrows-exchange"></i></div>
+        <div class="feature-name">Cross-modal Gating Alignment</div>
+        <div class="feature-desc">CG maps text and image embeddings into a shared latent space, evaluating modality
+          agreement and controlling each modality's contribution.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-layers-intersect"></i></div>
+        <div class="feature-name">Cross-Attention Fusion</div>
+        <div class="feature-desc">Text and images dynamically weigh each other — a defect image elevates negative
+          probability while a quality photo boosts positive classification.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-flag"></i></div>
+        <div class="feature-name">Automated Review Triage</div>
+        <div class="feature-desc">Negative reviews are flagged for customer support, neutral reviews are logged, and
+          positive reviews are highlighted and approved automatically.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-chart-bar"></i></div>
+        <div class="feature-name">Product-Level Aggregation</div>
+        <div class="feature-desc">Detects sustained negative sentiment patterns across reviews, triggering product-level
+          alerts for quality control intervention.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-sparkles"></i></div>
+        <div class="feature-name">State-of-the-Art Deep Learning</div>
+        <div class="feature-desc">Powered by RoBERTa for semantic text understanding and ResNet-50 for spatial visual
+          feature extraction — pre-trained on massive datasets.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tech" id="tech">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div class="section-tag">Technology Stack</div>
+      <h2 class="section-title" style="margin-bottom:16px;">Built with Modern AI</h2>
+    </div>
+    <div class="tech-row">
+      <div class="tech-pill"><i class="ti ti-brand-python"></i> FastAPI</div>
+      <div class="tech-pill"><i class="ti ti-flame"></i> PyTorch</div>
+      <div class="tech-pill"><i class="ti ti-robot"></i> HuggingFace</div>
+      <div class="tech-pill"><i class="ti ti-typography"></i> RoBERTa</div>
+      <div class="tech-pill"><i class="ti ti-photo-scan"></i> ResNet-50</div>
+      <div class="tech-pill"><i class="ti ti-arrows-cross"></i> Cross-Attention</div>
+      <div class="tech-pill"><i class="ti ti-git-merge"></i> Cross-modal Gating</div>
+      <div class="tech-pill"><i class="ti ti-table"></i> Pandas</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    CLIP-CA-CG · Lu et al. Multimodal Sentiment Analysis · Introduction to Artificial Intelligence · 2025
+  </footer>
 
 </body>
+
 </html>
