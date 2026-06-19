@@ -4,3 +4,7 @@ transformers
 pandas
 scikit-learn
 Pillow
+pyyaml
+fastapi
+uvicorn[standard]
+python-multipart
